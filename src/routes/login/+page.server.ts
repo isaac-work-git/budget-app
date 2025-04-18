@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { generateSessionToken, createSession, validateSessionToken } from '../../lib/server/session';  // Import your session logic
-import { db, userTable } from '../../lib/server/db';  // Your Drizzle setup (adjust path as needed)
+import { generateSessionToken, createSession, validateSessionToken } from '../../lib/db/session';  // Import your session logic
+import { db, userTable } from '../../lib/db/db';  // Your Drizzle setup (adjust path as needed)
 import { eq } from 'drizzle-orm';
 
 export const actions = {

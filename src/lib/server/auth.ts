@@ -2,7 +2,7 @@
 import { lucia } from 'lucia';
 import { libsql } from '@lucia-auth/adapter-drizzle';
 import { db } from '$lib/server';
-import * as schema from '$lib/server/db';
+import * as schema from '$lib/db/db';
 
 export const auth = lucia({
 	adapter: libsql(db, schema),
