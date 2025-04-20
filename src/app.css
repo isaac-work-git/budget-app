@@ -1,3 +1,11 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+h1 {
+    @apply text-4xl;
+}
+
+nav {
+    @apply flex justify-between bg-blue-500 text-white p-6;
+}
