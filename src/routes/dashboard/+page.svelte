@@ -1,19 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageServerData } from './$types';
-	import { browser } from '$app/environment';
 
-	let { currency, amount } = $props();
-	let { data }: { data: PageServerData } = $props();
+	interface Props {
+		data: PageServerData;
+		form: any;
+	}
 
-	$: locale = browser ? navigator.language : 'en-US';
-	$: formatter = new Intl.NumberFormat(locale, {
-		style: 'currency',
-		currency: currency,
-		maximumFractionDigits: 2,
-		minimumFractionDigits: 2
-	});
-	$: formatted = formatter.format(amount);
+	let { data, form }: Props = $props();
 </script>
 
 <!-- <h1 class="flex md:mt-30 md:mb-20">Hi, {data.user.username}!</h1> -->
@@ -24,19 +18,24 @@
 
 <main>
 	<section class="m-10 grid justify-center gap-10 md:grid-cols-3">
-		<div>
-			<div class="mb-6 rounded-xl bg-blue-500 p-4">
+		<form method="post" use:enhance class="flex flex-col">
+			<span class="mb-6 rounded-xl bg-blue-500 p-4">
 				<h1>Monthly Income</h1>
 				<input
 					name="income"
-					id="currencyInput"
 					type="text"
 					placeholder="Enter amount"
 					class="rounded-lg border-none bg-blue-300"
 				/>
-			</div>
-			<button class="max-w-48 hover:bg-blue-500 hover:text-white active:bg-blue-600">Save</button>
-		</div>
+			</span>
+			<button type="submit" class="max-w-48 hover:bg-blue-500 hover:text-white active:bg-blue-600"
+				>Save</button
+			>
+		</form>
+
+		{#if form?.formattedIncome}
+			<p>Formatted: {form.formattedIncome}</p>
+		{/if}
 
 		<div class="rounded-xl bg-blue-500 p-4">
 			<h1>Total Expenses</h1>
