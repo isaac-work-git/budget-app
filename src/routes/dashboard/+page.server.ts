@@ -3,8 +3,9 @@ import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from '../$types';
 import * as table from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
+import { eq } from 'drizzle-orm';
 
-export const load: PageServerLoad = async (event: { locals: { user: any; }; }) => {
+export const load: PageServerLoad = async (event: { locals: { user: any } }) => {
 	if (!event.locals.user) {
 		return redirect(302, '/');
 	}
@@ -22,28 +23,50 @@ export const actions: Actions = {
 		return redirect(302, '/');
 	},
 
-	format: async ({ request }) => {
-		const formData = await request.formData();
+	income: async (event) => {
+		const formData = await event.request.formData();
 		const income = formData.get('income') as string;
 
-		// Format on server
-		const parsed = parseFloat(income.replace(/[^\d.-]/g, ''));
-		const formattedIncome = new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: 'USD',
-			maximumFractionDigits: 2,
-			minimumFractionDigits: 2
-		}).format(parsed);
+		if (!event.locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
 
-		// Save to DB or pass to the page as form output
 		try {
-			await db.insert(table.user).values({ id: income });
+			await db
+				.update(table.user)
+				.set({ income: income })
+				.where(eq(table.user.id, event.locals.user.id));
 		} catch (error) {
 			return fail(500, { message: 'An error has occurred' });
 		}
+
 		return {
-			success: true,
-			formattedIncome
+			success: true
 		};
-	},
+	}
+
+	// format: async ({ request }) => {
+	// 	const formData = await request.formData();
+	// 	const income = formData.get('income') as string;
+
+	// 	// Format on server
+	// 	const parsed = parseFloat(income.replace(/[^\d.-]/g, ''));
+	// 	const formattedIncome = new Intl.NumberFormat('en-US', {
+	// 		style: 'currency',
+	// 		currency: 'USD',
+	// 		maximumFractionDigits: 2,
+	// 		minimumFractionDigits: 2
+	// 	}).format(parsed);
+
+	// 	// Save to DB or pass to the page as form output
+	// 	try {
+	// 		await db.update(table.user).set({ income: income }).where(eq(table.user.id, user.id));
+	// 	} catch (error) {
+	// 		return fail(500, { message: 'An error has occurred' });
+	// 	}
+	// 	return {
+	// 		success: true,
+	// 		formattedIncome
+	// 	};
+	// },
 };
