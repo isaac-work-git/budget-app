@@ -10,7 +10,6 @@
 
 	let { data }: Props = $props();
 	let items = [...(data.expenses ?? [])];
-	// let items: any[] = []; // or [] if empty to start
 
 	function addRow() {
 		items = [...items, { description: '', amount: 0 }];
