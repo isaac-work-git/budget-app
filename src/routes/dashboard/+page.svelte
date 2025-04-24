@@ -89,7 +89,7 @@
 					name="amount"
 					bind:value={item.amount}
 					placeholder="Amount"
-					class="flex-grow rounded-lg bg-blue-300 p-2"
+					class="grow rounded-lg bg-blue-300 p-2"
 					oninput={(e) => {
 						const input = e.target as HTMLInputElement;
 						input.value = input.value.replace(/[^0-9.]/g, '');
