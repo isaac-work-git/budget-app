@@ -10,6 +10,7 @@
 
 	let { data }: Props = $props();
 	let items = [...(data.expenses ?? [])];
+	// let items: any[] = []; // or [] if empty to start
 
 	function addRow() {
 		items = [...items, { description: '', amount: 0 }];
@@ -89,7 +90,11 @@
 					name="amount"
 					bind:value={item.amount}
 					placeholder="Amount"
+<<<<<<< HEAD
 					class="grow rounded-lg bg-blue-300 p-2"
+=======
+					class="flex-grow rounded-lg bg-blue-300 p-2"
+>>>>>>> 441df8d (Working on expenses)
 					oninput={(e) => {
 						const input = e.target as HTMLInputElement;
 						input.value = input.value.replace(/[^0-9.]/g, '');
