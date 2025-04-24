@@ -5,11 +5,24 @@ import * as table from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 
-export const load: PageServerLoad = async (event: { locals: { user: any } }) => {
-	if (!event.locals.user) {
+export const load: PageServerLoad = async ({ locals }) => {
+	if (!locals.user) {
 		return redirect(302, '/');
 	}
-	return { user: event.locals.user };
+
+	const [fullUser] = await db.select().from(table.user).where(eq(table.user.id, locals.user.id));
+
+	const { passwordHash, ...safeUser } = fullUser; // remove password
+
+	const userExpenses = await db
+		.select()
+		.from(table.expenses)
+		.where(eq(table.expenses.userId, locals.user.id)); // if you're scoping by user
+
+	return {
+		user: safeUser,
+		expenses: userExpenses
+	};
 };
 
 export const actions: Actions = {
@@ -43,30 +56,48 @@ export const actions: Actions = {
 		return {
 			success: true
 		};
+	},
+
+	add_expense: async (event) => {
+		const formData = await event.request.formData();
+		const description = formData.get('description') as string;
+		const amount = formData.get('amount') as string;
+
+		if (!event.locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		try {
+			await db.insert(table.expenses).values({
+				description: description,
+				amount: parseFloat(amount),
+				userId: event.locals.user.id
+			});
+		} catch (error) {
+			return fail(500, { message: 'An error has occurred' });
+		}
+
+		return {
+			success: true
+		};
 	}
 
-	// format: async ({ request }) => {
-	// 	const formData = await request.formData();
-	// 	const income = formData.get('income') as string;
+	// delete_expense: async (event) => {
+	// 	const formData = await event.request.formData();
+	// 	const id = formData.get('id') as string;
 
-	// 	// Format on server
-	// 	const parsed = parseFloat(income.replace(/[^\d.-]/g, ''));
-	// 	const formattedIncome = new Intl.NumberFormat('en-US', {
-	// 		style: 'currency',
-	// 		currency: 'USD',
-	// 		maximumFractionDigits: 2,
-	// 		minimumFractionDigits: 2
-	// 	}).format(parsed);
+	// 	if (!event.locals.user) {
+	// 		return fail(401, { message: 'Unauthorized' });
+	// 	}
 
-	// 	// Save to DB or pass to the page as form output
 	// 	try {
-	// 		await db.update(table.user).set({ income: income }).where(eq(table.user.id, user.id));
+	// 		await db.delete(table.expenses).where(eq(table.expenses.id, id));
 	// 	} catch (error) {
 	// 		return fail(500, { message: 'An error has occurred' });
 	// 	}
+
 	// 	return {
-	// 		success: true,
-	// 		formattedIncome
+	// 		success: true
 	// 	};
-	// },
+	// }
 };

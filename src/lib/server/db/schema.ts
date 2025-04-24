@@ -1,3 +1,4 @@
+import { real } from 'drizzle-orm/gel-core';
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 export const user = sqliteTable('user', {
@@ -15,6 +16,17 @@ export const session = sqliteTable('session', {
 	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
 });
 
+export const expenses = sqliteTable('expenses', {
+	id: text('id').primaryKey(),
+	description: text('description').notNull(),
+	amount: real('amount').notNull(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id)
+});
+
 export type Session = typeof session.$inferSelect;
 
 export type User = typeof user.$inferSelect;
+
+export type Expense = typeof expenses.$inferSelect;
