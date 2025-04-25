@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	// import { text } from '@sveltejs/kit';
 	import type { PageServerData } from './$types';
+	import ExpenseRow from '$lib/components/ExpenseRow.svelte';
+	import ExpenseAddForm from '$lib/components/ExpenseAddForm.svelte';
+	import NavBar from '$lib/components/NavBar.svelte';
 
 	interface Props {
 		data: PageServerData;
@@ -9,22 +11,30 @@
 	}
 
 	let { data }: Props = $props();
-	let items = [...(data.expenses ?? [])];
-	// let items: any[] = []; // or [] if empty to start
+	let hiddenInput: HTMLInputElement;
 
-	function addRow() {
-		items = [...items, { description: '', amount: 0 }];
-		console.log('Adding row...\n');
+	let items = $state([...(data.expenses ?? [])]);
+	let expenseDraft = $state({ description: '', amount: '' });
+
+	function addRow(row: { description: string; amount: number }) {
+		items = [...items, row];
 	}
 
 	function deleteRow(index: number) {
-		items = items.filter((_, i) => i !== index);
+		items = items.toSpliced(index, 1); // OR use slice/splice combo
 		console.log('Deleting row...\n');
 	}
+
+	// Sync hidden input with the serialized `items`
+	$effect(() => {
+		if (hiddenInput) hiddenInput.value = JSON.stringify(items);
+	});
 </script>
 
-<!-- <h1 class="flex md:mt-30 md:mb-20">Hi, {data.user.username}!</h1> -->
-<p class="pb-10">Your user ID is {data.user.id}.</p>
+<NavBar />
+
+<h1 class="flex md:mt-15 md:mb-20">Hi, {data.user.username}!</h1>
+
 <form method="post" action="?/logout" use:enhance>
 	<button class="max-w-48 hover:bg-blue-500 hover:text-white active:bg-blue-600">Sign out</button>
 </form>
@@ -74,66 +84,50 @@
 		</div>
 	</section>
 
-	<section class="m-10 grid grid-cols-1 justify-center gap-10 md:grid-cols-3">
-		<div class="grid grid-cols-2 gap-4 rounded-xl bg-blue-500 p-4">
+	<section class="m-10 flex gap-10">
+		<form
+			method="POST"
+			action="?/add_expense"
+			class="flex w-1/3 flex-col gap-4 rounded-xl bg-blue-500 p-4"
+			onsubmit={(e) => {
+				// Before submit, auto-push draft row if filled
+				if (expenseDraft.description || expenseDraft.amount) {
+					addRow({
+						description: expenseDraft.description,
+						amount: parseFloat(expenseDraft.amount)
+					});
+					expenseDraft.description = '';
+					expenseDraft.amount = '';
+				}
+			}}
+		>
 			<h1 class="col-span-2 text-white">Expected Expenses</h1>
+
 			{#each items as item, i}
-				<input
-					type="text"
-					name="description"
-					bind:value={item.description}
-					placeholder="Description"
-					class="rounded-lg bg-blue-300 p-2"
-				/>
-
-				<input
-					name="amount"
-					bind:value={item.amount}
-					placeholder="Amount"
-<<<<<<< HEAD
-					class="grow rounded-lg bg-blue-300 p-2"
-=======
-					class="flex-grow rounded-lg bg-blue-300 p-2"
->>>>>>> 441df8d (Working on expenses)
-					oninput={(e) => {
-						const input = e.target as HTMLInputElement;
-						input.value = input.value.replace(/[^0-9.]/g, '');
-					}}
-				/>
-				<!-- Delete button for this row -->
-				<button
-					type="button"
-					onclick={() => deleteRow(i)}
-					class="rounded-lg bg-red-600 px-2 text-white hover:bg-red-700"
-				>
-					X
-				</button>
+				<ExpenseRow {item} {i} onDelete={deleteRow} />
 			{/each}
-			<!-- Hidden field to hold serialized data -->
-			<input type="hidden" id="expensesInput" name="expenses" />
 
-			<form method="POST" action="?/add_expense">
+			<!-- Input row to add new items -->
+			<ExpenseAddForm draft={expenseDraft} onAdd={addRow} />
+
+			<!-- Hidden field to hold serialized data -->
+			<input type="hidden" name="expenses" bind:this={hiddenInput} />
+
+			<span class="flex justify-end gap-4">
 				<button type="submit" class="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700">
 					Save
 				</button>
-			</form>
-			<button
-				type="button"
-				onclick={addRow}
-				class="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-			>
-				Add Row
-			</button>
-		</div>
+			</span>
+		</form>
 
-		<div class="rounded-xl bg-blue-500 p-4">
+		<form class="w-1/3 rounded-xl bg-blue-500 p-4">
 			<h1>Grocery Tracker</h1>
 			<p id="currencyDisplay" class="rounded-lg bg-blue-300">0</p>
-		</div>
-		<div class="rounded-xl bg-blue-500 p-4">
+		</form>
+		<form class="w-1/3 rounded-xl bg-blue-500 p-4">
 			<h1>Fun Spending Report</h1>
 			<p id="currencyDisplay" class="rounded-lg bg-blue-300">0</p>
-		</div>
+		</form>
 	</section>
 </main>
 

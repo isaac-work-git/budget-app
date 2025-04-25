@@ -33,7 +33,6 @@
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.4",
 		"autoprefixer": "^10.4.21",
-		"bits-ui": "^0.22.0",
 		"clsx": "^2.1.1",
 		"drizzle-kit": "^0.30.2",
 		"eslint": "^9.18.0",
@@ -62,6 +61,7 @@
 		"@node-rs/argon2": "^2.0.2",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
+		"@tanstack/table-core": "^8.21.3",
 		"drizzle-orm": "^0.40.0",
 		"svelte-number-format": "^0.1.3"
 	}
