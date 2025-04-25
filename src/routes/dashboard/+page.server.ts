@@ -1,4 +1,4 @@
-import * as auth from '$lib/server/auth';
+// import * as auth from '$lib/server/auth';
 import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from '../$types';
 import * as table from '$lib/server/db/schema';
@@ -28,19 +28,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-	logout: async (event: RequestEvent<Partial<Record<string, string>>, string | null>) => {
-		if (!event.locals.session) {
-			return fail(401);
-		}
-		await auth.invalidateSession(event.locals.session.id);
-		auth.deleteSessionTokenCookie(event);
-
-		return redirect(302, '/');
-	},
-
 	income: async (event) => {
 		const formData = await event.request.formData();
-		const income = formData.get('income') as string;
+		const rawIncome = formData.get('income') as string;
+		const cleanedIncome = rawIncome.replace(/[^0-9.]/g, '');
+		const parsedIncome = parseFloat(cleanedIncome);
 
 		if (!event.locals.user) {
 			return fail(401, { message: 'Unauthorized' });
@@ -49,7 +41,7 @@ export const actions: Actions = {
 		try {
 			await db
 				.update(table.user)
-				.set({ income: income })
+				.set({ income: parsedIncome })
 				.where(eq(table.user.id, event.locals.user.id));
 		} catch (error) {
 			return fail(500, { message: 'An error has occurred' });

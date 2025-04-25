@@ -4,6 +4,7 @@
 	import ExpenseRow from '$lib/components/ExpenseRow.svelte';
 	import ExpenseAddForm from '$lib/components/ExpenseAddForm.svelte';
 	import NavBar from '$lib/components/NavBar.svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	interface Props {
 		data: PageServerData;
@@ -15,6 +16,23 @@
 
 	let items = $state([...(data.expenses ?? [])]);
 	let expenseDraft = $state({ description: '', amount: '' });
+	let total = $derived.by(() => {
+		return items.reduce((sum, item) => sum + item.amount, 0);
+	});
+	let income = $state(0);
+
+	if (typeof data.user.income === 'number') {
+		income = data.user.income;
+	} else if (typeof data.user.income === 'string') {
+		income = parseFloat(data.user.income);
+	} else {
+		income = 0;
+	}
+
+	console.log('Income: ', income);
+	console.log('Total: ', total);
+	let balance = $derived(income - total);
+	console.log('Balance: ', balance);
 
 	function addRow(row: { description: string; amount: number }) {
 		items = [...items, row];
@@ -33,19 +51,20 @@
 
 <NavBar />
 
-<h1 class="flex md:mt-15 md:mb-20">Hi, {data.user.username}!</h1>
-
-<form method="post" action="?/logout" use:enhance>
-	<button class="max-w-48 hover:bg-blue-500 hover:text-white active:bg-blue-600">Sign out</button>
-</form>
+<h1 class="flex px-10 md:mt-15 md:mb-20">Hi, {data.user.username}!</h1>
 
 <main>
 	<section class="m-10 grid grid-cols-1 justify-center gap-10 md:grid-cols-3">
-		<form method="POST" action="?/income" use:enhance class="flex flex-col">
+		<form method="POST" action="?/income" class="flex flex-col">
 			<span class="mb-6 rounded-xl bg-blue-500 p-4">
 				<h1>Monthly Income</h1>
-				{#if data.user.income}
-					<p class="mb-2 rounded-lg bg-blue-300">{data.user.income}</p>
+				{#if income}
+					<p class="mb-2 rounded-lg bg-blue-300">
+						{new Intl.NumberFormat('en-US', {
+							style: 'currency',
+							currency: 'USD'
+						}).format(income)}
+					</p>
 				{/if}
 
 				<input
@@ -57,16 +76,6 @@
 						const input = e.target as HTMLInputElement;
 						input.value = input.value.replace(/[^0-9.]/g, '');
 					}}
-					onblur={(e) => {
-						const input = e.target as HTMLInputElement;
-						const parsed = parseFloat(input.value.replace(/[^\d.]/g, ''));
-						input.value = isNaN(parsed)
-							? ''
-							: new Intl.NumberFormat('en-US', {
-									style: 'currency',
-									currency: 'USD'
-								}).format(parsed);
-					}}
 				/>
 			</span>
 			<button type="submit" class="max-w-48 hover:bg-blue-500 hover:text-white active:bg-blue-600"
@@ -76,11 +85,21 @@
 
 		<div class="rounded-xl bg-blue-500 p-4">
 			<h1>Total Expenses</h1>
-			<p id="currencyDisplay" class="rounded-lg bg-blue-300">0</p>
+			<p class="rounded-lg bg-blue-300 p-2">
+				Total: {new Intl.NumberFormat('en-US', {
+					style: 'currency',
+					currency: 'USD'
+				}).format(total)}
+			</p>
 		</div>
 		<div class="rounded-xl bg-blue-500 p-4">
 			<h1>Balance Leftover</h1>
-			<p id="currencyDisplay" class="rounded-lg bg-blue-300">0</p>
+			<p class={`rounded-lg bg-blue-300 p-2 ${balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
+				Balance: {new Intl.NumberFormat('en-US', {
+					style: 'currency',
+					currency: 'USD'
+				}).format(balance)}
+			</p>
 		</div>
 	</section>
 
