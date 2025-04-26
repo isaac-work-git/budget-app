@@ -1,11 +1,10 @@
 // import * as auth from '$lib/server/auth';
-import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from '../$types';
 import * as table from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
-
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
@@ -13,9 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	const [fullUser] = await db.select().from(table.user).where(eq(table.user.id, locals.user.id));
-
 	const { passwordHash, ...safeUser } = fullUser; // remove password
-
 	const userExpenses = await db
 		.select()
 		.from(table.expenses)
@@ -80,6 +77,36 @@ export const actions: Actions = {
 		return {
 			success: true
 		};
+	},
+
+	update_grocery: async (event) => {
+		const formData = await event.request.formData();
+		const rawGroceryItem = formData.get('groceryItem') as string;
+		const cleanedGroceryItem = rawGroceryItem.replace(/[^0-9.]/g, '');
+		const parsedGrocery = parseFloat(cleanedGroceryItem);
+
+		if (!event.locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		try {
+			const groceryItem = JSON.parse(rawGroceryItem);
+
+			await db
+				.update(table.grocery)
+				.set({ amount: parsedGrocery })
+				.where(
+					and(
+						eq(table.grocery.userId, event.locals.user.id),
+						eq(table.grocery.id, groceryItem.id)
+					)
+				);
+
+		} catch (error) {
+			console.error('Failed to update grocery item:', error);
+			return fail(500, { message: 'Server error updating grocery' });
+		}
+		return { success: true };
 	}
 };
 

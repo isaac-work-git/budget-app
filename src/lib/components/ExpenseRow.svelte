@@ -24,7 +24,7 @@
 	<button
 		type="button"
 		onclick={() => onDelete(i)}
-		class="rounded-lg bg-red-600 px-2 text-white hover:bg-red-700"
+		class="w-min rounded-lg bg-red-600 px-5 text-white hover:bg-red-700"
 	>
 		X
 	</button>

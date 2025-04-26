@@ -25,8 +25,18 @@ export const expenses = sqliteTable('expenses', {
 		.references(() => user.id)
 });
 
+export const grocery = sqliteTable('grocery', {
+	id: text('id').primaryKey(),
+	amount: real('amount').notNull(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id)
+});
+
 export type Session = typeof session.$inferSelect;
 
 export type User = typeof user.$inferSelect;
 
 export type Expense = typeof expenses.$inferSelect;
+
+export type Grocery = typeof grocery.$inferSelect;

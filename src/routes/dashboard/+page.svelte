@@ -4,6 +4,7 @@
 	import ExpenseRow from '$lib/components/ExpenseRow.svelte';
 	import ExpenseAddForm from '$lib/components/ExpenseAddForm.svelte';
 	import NavBar from '$lib/components/NavBar.svelte';
+	import GroceryRow from '$lib/components/GroceryRow.svelte';
 
 	interface Props {
 		data: PageServerData;
@@ -43,6 +44,24 @@
 	$effect(() => {
 		if (hiddenInput) hiddenInput.value = JSON.stringify(items);
 	});
+
+	// Helper to get the current month in "YYYY-MM" format
+	function getCurrentMonth() {
+		const now = new Date();
+		return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+	}
+
+	let groceryItems = $state<{ week: number; amount: number | null; month: string }[]>([
+		{ week: 1, amount: null, month: getCurrentMonth() },
+		{ week: 2, amount: null, month: getCurrentMonth() },
+		{ week: 3, amount: null, month: getCurrentMonth() },
+		{ week: 4, amount: null, month: getCurrentMonth() },
+		{ week: 5, amount: null, month: getCurrentMonth() }
+	]);
+
+	let groceryTotal = $derived.by(() => {
+		return groceryItems.reduce((sum, item) => sum + (item.amount ?? 0), 0);
+	});
 </script>
 
 <NavBar />
@@ -50,20 +69,18 @@
 <h1 class="flex px-10 md:mt-15 md:mb-20">Hi, {data.user.username}!</h1>
 
 <main>
-	<section class="m-10 grid grid-cols-1 justify-center gap-10 md:grid-cols-3">
+	<section class="m-10 grid grid-cols-1 justify-center gap-6 md:grid-cols-3">
 		<form method="POST" action="?/income" class="flex flex-col">
 			<span class="mb-6 rounded-xl bg-blue-500 p-4">
-				<div class="flex flex-row">
-					<h1>Monthly Income:</h1>
+				<h1>
+					Monthly Income:
 					{#if income}
-						<p class="vertical-center bg-blue-300">
-							&nbsp;{new Intl.NumberFormat('en-US', {
-								style: 'currency',
-								currency: 'USD'
-							}).format(income)}
-						</p>
+						{new Intl.NumberFormat('en-US', {
+							style: 'currency',
+							currency: 'USD'
+						}).format(income)}
 					{/if}
-				</div>
+				</h1>
 
 				<input
 					name="income"
@@ -81,27 +98,29 @@
 			>
 		</form>
 
-		<div class="rounded-xl bg-blue-500 p-4">
-			<h1>Total Expenses</h1>
-			<p class="rounded-lg bg-blue-300 p-2">
-				Total: {new Intl.NumberFormat('en-US', {
+		<div class="h-min rounded-xl bg-blue-500 p-4">
+			<h1>
+				Expenses:
+				{new Intl.NumberFormat('en-US', {
 					style: 'currency',
 					currency: 'USD'
 				}).format(total)}
-			</p>
+			</h1>
 		</div>
-		<div class="rounded-xl bg-blue-500 p-4">
-			<h1>Balance Leftover</h1>
-			<p class={`rounded-lg bg-blue-300 p-2 ${balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
-				Balance: {new Intl.NumberFormat('en-US', {
-					style: 'currency',
-					currency: 'USD'
-				}).format(balance)}
-			</p>
+		<div class="h-min rounded-xl bg-blue-500 p-4">
+			<h1>
+				Balance:&nbsp;
+				<span class={`${balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
+					{new Intl.NumberFormat('en-US', {
+						style: 'currency',
+						currency: 'USD'
+					}).format(balance)}
+				</span>
+			</h1>
 		</div>
 	</section>
 
-	<section class="m-10 flex gap-10">
+	<section class="m-10 flex gap-6">
 		<form
 			method="POST"
 			action="?/add_expense"
@@ -137,9 +156,29 @@
 			</span>
 		</form>
 
-		<form class="w-1/3 rounded-xl bg-blue-500 p-4">
-			<h1>Grocery Tracker</h1>
-			<p id="currencyDisplay" class="rounded-lg bg-blue-300">0</p>
+		<form class="flex w-1/3 flex-col gap-4 rounded-xl bg-blue-500 p-4">
+			<h1 class="col-span-3 text-white">Grocery Tracker</h1>
+			<div class="flex flex-row">
+				<h1 class="w-1/3 justify-center">Week</h1>
+				<h1 class="w-1/3 justify-center">Amount</h1>
+				<h1 class="w-1/3 justify-center">Month</h1>
+			</div>
+
+			{#each groceryItems as groceryItem, i}
+				<GroceryRow bind:groceryItem={groceryItems[i]} />
+			{/each}
+
+			<!-- Total row -->
+			<div class="mt-4 grid grid-cols-3 border-t border-black pt-2 text-center font-semibold">
+				<p>Total</p>
+				<p>
+					{new Intl.NumberFormat('en-US', {
+						style: 'currency',
+						currency: 'USD'
+					}).format(groceryTotal)}
+				</p>
+				<p></p>
+			</div>
 		</form>
 		<form class="w-1/3 rounded-xl bg-blue-500 p-4">
 			<h1>Fun Spending Report</h1>
