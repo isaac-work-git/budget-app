@@ -4,7 +4,6 @@
 	import ExpenseRow from '$lib/components/ExpenseRow.svelte';
 	import ExpenseAddForm from '$lib/components/ExpenseAddForm.svelte';
 	import NavBar from '$lib/components/NavBar.svelte';
-	import { invalidateAll } from '$app/navigation';
 
 	interface Props {
 		data: PageServerData;
@@ -29,10 +28,7 @@
 		income = 0;
 	}
 
-	console.log('Income: ', income);
-	console.log('Total: ', total);
 	let balance = $derived(income - total);
-	console.log('Balance: ', balance);
 
 	function addRow(row: { description: string; amount: number }) {
 		items = [...items, row];
@@ -57,15 +53,17 @@
 	<section class="m-10 grid grid-cols-1 justify-center gap-10 md:grid-cols-3">
 		<form method="POST" action="?/income" class="flex flex-col">
 			<span class="mb-6 rounded-xl bg-blue-500 p-4">
-				<h1>Monthly Income</h1>
-				{#if income}
-					<p class="mb-2 rounded-lg bg-blue-300">
-						{new Intl.NumberFormat('en-US', {
-							style: 'currency',
-							currency: 'USD'
-						}).format(income)}
-					</p>
-				{/if}
+				<div class="flex flex-row">
+					<h1>Monthly Income:</h1>
+					{#if income}
+						<p class="vertical-center bg-blue-300">
+							&nbsp;{new Intl.NumberFormat('en-US', {
+								style: 'currency',
+								currency: 'USD'
+							}).format(income)}
+						</p>
+					{/if}
+				</div>
 
 				<input
 					name="income"
