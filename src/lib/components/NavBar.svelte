@@ -32,7 +32,10 @@
 <div class="h-16 bg-gray-100 dark:bg-gray-900">
 	<Navbar {navStatus} hamburgerMenu={false}>
 		{#snippet brand()}
-			<NavBrand siteName="BUDGT">
+			<NavBrand
+				siteName="BUDGT"
+				spanClass="whitespace-nowrap text-xl font-semibold text dark:text-white"
+			>
 				<!-- <img width="30" src="" alt="Budget icon" /> -->
 			</NavBrand>
 		{/snippet}
@@ -69,9 +72,9 @@
 	</Navbar>
 </div>
 
-<!-- <nav>
-	<a href="/dashboard">Dashboard</a>
+<nav>
+	<!-- <a href="/dashboard">Dashboard</a> -->
 	<form method="POST" action="/logout">
 		<button class="max-w-48 hover:bg-blue-500 hover:text-white active:bg-blue-600">Sign out</button>
 	</form>
-</nav> -->
+</nav>
