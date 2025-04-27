@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
 	import { Tabs, TabItem, Label, Input } from 'svelte-5-ui-lib';
-	import { UserOutline } from 'flowbite-svelte-icons';
+	import { LockOutline, UserOutline } from 'flowbite-svelte-icons';
 
 	let { form }: { form: ActionData } = $props();
 </script>
@@ -11,7 +11,7 @@
 	<Tabs
 		tabStyle="pill"
 		contentClass="p-6 bg-gray-100 rounded-b-xl shadow-md dark:text-white"
-		ulClass="flex flex-nowrap self-center justify-center gap-2 rounded-t-6xl overflow-hidden p-2"
+		ulClass="flex flex-nowrap self-center justify-center overflow-hidden"
 	>
 		<TabItem open title="Login">
 			<form method="POST" action="?/login" use:enhance class="flex flex-col justify-center gap-10">
@@ -25,7 +25,11 @@
 				</Label>
 				<Label for="password">
 					Password
-					<Input type="password" name="password" class="pl-10" required />
+					<Input name="password" type="password" class="w-full pl-15" required>
+						{#snippet left()}
+							<LockOutline class="h-4 w-4" />
+						{/snippet}
+					</Input>
 				</Label>
 				<button class="flex cursor-pointer" formaction="?/login"> Login </button>
 			</form>
@@ -48,7 +52,11 @@
 				</Label>
 				<Label for="password">
 					Password
-					<Input type="password" name="password" class="pl-10" required />
+					<Input type="password" name="password" class="pl-10" required>
+						{#snippet left()}
+							<LockOutline class="h-4 w-4" />
+						{/snippet}
+					</Input>
 				</Label>
 				<button
 					class="flex cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"

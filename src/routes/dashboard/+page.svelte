@@ -5,7 +5,7 @@
 	import ExpenseAddForm from '$lib/components/ExpenseAddForm.svelte';
 	import NavBar from '$lib/components/NavBar.svelte';
 	import GroceryRow from '$lib/components/GroceryRow.svelte';
-	import { Input } from 'svelte-5-ui-lib';
+	import { Input, Card } from 'svelte-5-ui-lib';
 
 	interface Props {
 		data: PageServerData;
@@ -70,124 +70,138 @@
 	});
 </script>
 
-<NavBar />
+<NavBar name={data.user.username} />
 
 <h1 class="flex px-10 md:mt-15">Welcome back, {data.user.username}!</h1>
 <h2 class="flex px-10 text-xl md:mb-20">Let's budget.</h2>
 
 <main>
 	<section class="m-10 grid grid-cols-1 justify-center gap-6 md:grid-cols-3">
-		<form method="POST" action="?/income" class="flex flex-col">
-			<span class="mb-6 rounded-xl bg-blue-500 p-4">
+		<Card>
+			<form method="POST" action="?/income" class="flex flex-col">
+				<span class="mb-6">
+					<h1 class="pb-2 dark:text-white">
+						Monthly Income:
+						{#if income}
+							{new Intl.NumberFormat('en-US', {
+								style: 'currency',
+								currency: 'USD'
+							}).format(income)}
+						{/if}
+					</h1>
+
+					<Input
+						name="income"
+						type="text"
+						placeholder="Enter amount"
+						class="rounded-xl border-none"
+						oninput={(e) => {
+							const input = e.target as HTMLInputElement;
+							input.value = input.value.replace(/[^0-9.]/g, '');
+						}}
+					/>
+				</span>
+				<button
+					type="submit"
+					class="max-w-48 bg-white hover:bg-blue-500 hover:text-white active:bg-blue-600"
+					>Save</button
+				>
+			</form>
+		</Card>
+
+		<Card>
+			<div class="h-min p-4 dark:text-white">
 				<h1>
-					Monthly Income:
-					{#if income}
+					Expenses:
+					{new Intl.NumberFormat('en-US', {
+						style: 'currency',
+						currency: 'USD'
+					}).format(total)}
+				</h1>
+			</div>
+			<div class="h-min p-4 dark:text-white">
+				<h1>
+					Balance:&nbsp;
+					<span class={`${balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
 						{new Intl.NumberFormat('en-US', {
 							style: 'currency',
 							currency: 'USD'
-						}).format(income)}
-					{/if}
+						}).format(balance)}
+					</span>
 				</h1>
+			</div>
+		</Card>
 
-				<input
-					name="income"
-					type="text"
-					placeholder="Enter amount"
-					class="rounded-xl border-none"
-					oninput={(e) => {
-						const input = e.target as HTMLInputElement;
-						input.value = input.value.replace(/[^0-9.]/g, '');
-					}}
-				/>
-			</span>
-			<button type="submit" class="max-w-48 hover:bg-blue-500 hover:text-white active:bg-blue-600"
-				>Save</button
-			>
-		</form>
+		<Card>
+			<form class="flex flex-col gap-4 dark:text-white">
+				<h1 class="col-span-3">Grocery Tracker</h1>
+				<div class="flex flex-row">
+					<h1 class="w-1/3 justify-center">Week</h1>
+					<h1 class="w-1/3 justify-center">Amount</h1>
+					<h1 class="w-1/3 justify-center">Month</h1>
+				</div>
 
-		<div class="h-min rounded-xl bg-blue-500 p-4">
-			<h1>
-				Expenses:
-				{new Intl.NumberFormat('en-US', {
-					style: 'currency',
-					currency: 'USD'
-				}).format(total)}
-			</h1>
-		</div>
-		<div class="h-min rounded-xl bg-blue-500 p-4">
-			<h1>
-				Balance:&nbsp;
-				<span class={`${balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
-					{new Intl.NumberFormat('en-US', {
-						style: 'currency',
-						currency: 'USD'
-					}).format(balance)}
-				</span>
-			</h1>
-		</div>
+				{#each groceryItems as groceryItem, i}
+					<GroceryRow bind:groceryItem={groceryItems[i]} />
+				{/each}
+
+				<!-- Total row -->
+				<div class="mt-4 grid grid-cols-3 border-t border-black pt-2 text-center font-semibold">
+					<p>Total</p>
+					<!-- #FIXME: Make this based on a set grocery value -->
+					<p class={`${groceryTotal < 0 ? 'text-red-600' : 'text-green-600'}`}>
+						{new Intl.NumberFormat('en-US', {
+							style: 'currency',
+							currency: 'USD'
+						}).format(groceryTotal)}
+					</p>
+					<p></p>
+				</div>
+			</form>
+		</Card>
 	</section>
 
 	<section class="m-10 flex gap-6">
-		<form
-			method="POST"
-			action="?/add_expense"
-			class="flex w-1/3 flex-col gap-4 rounded-xl bg-blue-500 p-4"
-			onsubmit={(e) => {
-				// Before submit, auto-push draft row if filled
-				if (expenseDraft.description || expenseDraft.amount) {
-					addRow({
-						description: expenseDraft.description,
-						amount: parseFloat(expenseDraft.amount)
-					});
-					expenseDraft.description = '';
-					expenseDraft.amount = '';
-				}
-			}}
-		>
-			<h1 class="col-span-2 text-white">Expected Expenses</h1>
+		<Card shadow="xl" size="md">
+			<form
+				method="POST"
+				action="?/add_expense"
+				class="flex flex-col gap-4 p-4"
+				onsubmit={(e) => {
+					// Before submit, auto-push draft row if filled
+					if (expenseDraft.description || expenseDraft.amount) {
+						addRow({
+							description: expenseDraft.description,
+							amount: parseFloat(expenseDraft.amount)
+						});
+						expenseDraft.description = '';
+						expenseDraft.amount = '';
+					}
+				}}
+			>
+				<h1 class="col-span-2 dark:text-white">Expected Expenses</h1>
 
-			{#each items as item, i}
-				<ExpenseRow {item} {i} onDelete={deleteRow} />
-			{/each}
+				{#each items as item, i}
+					<ExpenseRow {item} {i} onDelete={deleteRow} />
+				{/each}
 
-			<!-- Input row to add new items -->
-			<ExpenseAddForm draft={expenseDraft} onAdd={addRow} />
+				<!-- Input row to add new items -->
+				<ExpenseAddForm draft={expenseDraft} onAdd={addRow} />
 
-			<!-- Hidden field to hold serialized data -->
-			<input type="hidden" name="expenses" bind:this={hiddenInput} />
+				<!-- Hidden field to hold serialized data -->
+				<input type="hidden" name="expenses" bind:this={hiddenInput} />
 
-			<span class="flex justify-end gap-4">
-				<button type="submit" class="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700">
-					Save
-				</button>
-			</span>
-		</form>
+				<span class="flex justify-end gap-4">
+					<button
+						type="submit"
+						class="rounded-lg bg-white px-6 py-2 hover:bg-blue-500 hover:text-white"
+					>
+						Save
+					</button>
+				</span>
+			</form>
+		</Card>
 
-		<form class="flex w-1/3 flex-col gap-4 rounded-xl bg-blue-500 p-4">
-			<h1 class="col-span-3 text-white">Grocery Tracker</h1>
-			<div class="flex flex-row">
-				<h1 class="w-1/3 justify-center">Week</h1>
-				<h1 class="w-1/3 justify-center">Amount</h1>
-				<h1 class="w-1/3 justify-center">Month</h1>
-			</div>
-
-			{#each groceryItems as groceryItem, i}
-				<GroceryRow bind:groceryItem={groceryItems[i]} />
-			{/each}
-
-			<!-- Total row -->
-			<div class="mt-4 grid grid-cols-3 border-t border-black pt-2 text-center font-semibold">
-				<p>Total</p>
-				<!-- #FIXME: Make this based on a set grocery value -->
-				<p class={`${groceryTotal < 0 ? 'text-red-600' : 'text-green-600'}`}>
-					{new Intl.NumberFormat('en-US', {
-						style: 'currency',
-						currency: 'USD'
-					}).format(groceryTotal)}
-				</p>
-				<p></p>
-			</div>
-		</form>
 		<form class="flex w-1/3 flex-col gap-4 rounded-xl bg-blue-500 p-4">
 			<h1 class="col-span-4 text-white">Fun Spending Report</h1>
 			<div class="flex flex-row">

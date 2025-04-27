@@ -27,6 +27,7 @@
 		navStatus = nav.isOpen;
 		activeUrl = $page.url.pathname;
 	});
+	let { name } = $props();
 </script>
 
 <div class="h-16 bg-gray-100 dark:bg-gray-900">
@@ -50,7 +51,7 @@
 						class="absolute top-[14px] -left-[110px] md:-left-[160px] "
 					>
 						<DropdownHeader class="px-4 py-2">
-							<span class="block text-sm text-gray-900 dark:text-white">Bonnie Green</span>
+							<span class="block text-sm text-gray-900 dark:text-white">{name}</span>
 						</DropdownHeader>
 						<!-- <DropdownUl>
 							<DropdownLi href="/">Dashboard</DropdownLi>
@@ -59,7 +60,9 @@
 							<DropdownLi href="/components">Alert</DropdownLi>
 						</DropdownUl> -->
 						<DropdownFooter class="px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600">
-							Sign out
+							<form method="POST" action="/logout">
+								<button class="max-w-48 cursor-pointer">Sign out</button>
+							</form>
 						</DropdownFooter>
 					</Dropdown>
 				</div>
@@ -71,10 +74,3 @@
 		</NavUl>
 	</Navbar>
 </div>
-
-<nav>
-	<!-- <a href="/dashboard">Dashboard</a> -->
-	<form method="POST" action="/logout">
-		<button class="max-w-48 hover:bg-blue-500 hover:text-white active:bg-blue-600">Sign out</button>
-	</form>
-</nav>
