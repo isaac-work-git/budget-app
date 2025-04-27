@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
-	import { Tabs, TabItem } from 'svelte-5-ui-lib';
+	import { Tabs, TabItem, Label, Input } from 'svelte-5-ui-lib';
+	import { UserOutline } from 'flowbite-svelte-icons';
 
 	let { form }: { form: ActionData } = $props();
 </script>
@@ -9,22 +10,26 @@
 <div class="flex h-screen flex-col items-center justify-center">
 	<Tabs
 		tabStyle="pill"
-		contentClass="p-6 bg-gray-100 rounded-b-xl shadow-md"
-		ulClass="flex flex-nowrap self-center justify-center gap-2 rounded-t-6xl overflow-hidden bg-white p-2"
+		contentClass="p-6 bg-gray-100 rounded-b-xl shadow-md dark:text-white"
+		ulClass="flex flex-nowrap self-center justify-center gap-2 rounded-t-6xl overflow-hidden p-2"
 	>
 		<TabItem open title="Login">
 			<form method="POST" action="?/login" use:enhance class="flex flex-col justify-center gap-10">
-				<label>
+				<Label for="username">
 					Username
-					<input name="username" required />
-				</label>
-				<label>
+					<Input name="username" class="pl-10" required>
+						{#snippet left()}
+							<UserOutline class="h-4 w-4" />
+						{/snippet}
+					</Input>
+				</Label>
+				<Label for="password">
 					Password
-					<input type="password" name="password" required />
-				</label>
+					<Input type="password" name="password" class="pl-10" required />
+				</Label>
 				<button class="flex cursor-pointer" formaction="?/login"> Login </button>
 			</form>
-			<p style="color: red">{form?.message ?? ''}</p>
+			<p class="mt-2 text-center font-semibold text-red-500">{form?.message ?? ''}</p>
 		</TabItem>
 		<TabItem title="Register">
 			<form
@@ -33,14 +38,18 @@
 				use:enhance
 				class="flex flex-col justify-center gap-10"
 			>
-				<label>
+				<Label for="username">
 					Username
-					<input name="username" required />
-				</label>
-				<label>
+					<Input name="username" class="pl-10" required>
+						{#snippet left()}
+							<UserOutline class="h-4 w-4" />
+						{/snippet}
+					</Input>
+				</Label>
+				<Label for="password">
 					Password
-					<input type="password" name="password" required />
-				</label>
+					<Input type="password" name="password" class="pl-10" required />
+				</Label>
 				<button
 					class="flex cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
 					formaction="?/register"
@@ -54,27 +63,6 @@
 </div>
 
 <style>
-	label {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		font-weight: 600;
-		color: #333;
-	}
-
-	input {
-		border-radius: 10px;
-		border: 2px solid #ccc;
-		padding: 0.5rem 1rem;
-		background-color: white;
-		transition: border 0.2s;
-	}
-
-	input:focus {
-		border-color: #3b82f6; /* blue-500 */
-		outline: none;
-	}
-
 	button {
 		display: flex;
 		border-radius: 9999px;

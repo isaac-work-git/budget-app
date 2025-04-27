@@ -4,7 +4,10 @@ import tailwindcssAnimate from "tailwindcss-animate";
 /** @type {import('tailwindcss').Config} */
 const config = {
 	darkMode: ["class"],
-	content: ["./src/**/*.{html,js,svelte,ts}"],
+	content: [
+		"./src/**/*.{html,js,svelte,ts}",
+		"./node_modules/flowbite-svelte-icons/**/*.{html,js,svelte,ts}",
+	],
 	safelist: ["dark"],
 	theme: {
 		container: {
@@ -58,7 +61,7 @@ const config = {
 					"accent-foreground": "hsl(var(--sidebar-accent-foreground))",
 					border: "hsl(var(--sidebar-border))",
 					ring: "hsl(var(--sidebar-ring))",
-        		},
+				},
 			},
 			borderRadius: {
 				xl: "calc(var(--radius) + 4px)",
@@ -84,10 +87,10 @@ const config = {
 				},
 			},
 			animation: {
-        		"accordion-down": "accordion-down 0.2s ease-out",
-        		"accordion-up": "accordion-up 0.2s ease-out",
-       			"caret-blink": "caret-blink 1.25s ease-out infinite",
-      		},
+				"accordion-down": "accordion-down 0.2s ease-out",
+				"accordion-up": "accordion-up 0.2s ease-out",
+				"caret-blink": "caret-blink 1.25s ease-out infinite",
+			},
 		},
 	},
 	plugins: [tailwindcssAnimate],

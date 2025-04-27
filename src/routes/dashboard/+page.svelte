@@ -5,6 +5,7 @@
 	import ExpenseAddForm from '$lib/components/ExpenseAddForm.svelte';
 	import NavBar from '$lib/components/NavBar.svelte';
 	import GroceryRow from '$lib/components/GroceryRow.svelte';
+	import { Input } from 'svelte-5-ui-lib';
 
 	interface Props {
 		data: PageServerData;
@@ -92,7 +93,7 @@
 					name="income"
 					type="text"
 					placeholder="Enter amount"
-					class="rounded-lg border-none bg-blue-300"
+					class="rounded-xl border-none"
 					oninput={(e) => {
 						const input = e.target as HTMLInputElement;
 						input.value = input.value.replace(/[^0-9.]/g, '');

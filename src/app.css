@@ -12,6 +12,8 @@
 @theme {
     --z-index-100: 100;
 
+    --radius: 0.5rem;
+
     --color-secondary-50: #fff5f2;
     --color-secondary-100: #fff1ee;
     --color-secondary-200: #ffe4de;
