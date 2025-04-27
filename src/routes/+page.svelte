@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
-	import { Tabs, TabItem, GradientButton } from 'svelte-5-ui-lib';
+	import { Tabs, TabItem } from 'svelte-5-ui-lib';
 
 	let { form }: { form: ActionData } = $props();
 </script>
@@ -13,39 +13,40 @@
 		ulClass="flex flex-nowrap self-center justify-center gap-2 rounded-t-6xl overflow-hidden bg-white p-2"
 	>
 		<TabItem open title="Login">
-			<form method="post" action="?/login" use:enhance class="flex flex-col justify-center gap-6">
+			<form method="POST" action="?/login" use:enhance class="flex flex-col justify-center gap-10">
 				<label>
 					Username
 					<input name="username" required />
 				</label>
-				<label class="mb-10">
+				<label>
 					Password
 					<input type="password" name="password" required />
 				</label>
-				<GradientButton shadow pill class="flex self-center active:bg-blue-600"
-					>Login</GradientButton
-				>
+				<button class="flex cursor-pointer" formaction="?/login"> Login </button>
 			</form>
 			<p style="color: red">{form?.message ?? ''}</p>
 		</TabItem>
 		<TabItem title="Register">
 			<form
-				method="post"
+				method="POST"
 				action="?/register"
 				use:enhance
-				class="flex flex-col justify-center gap-6"
+				class="flex flex-col justify-center gap-10"
 			>
 				<label>
 					Username
 					<input name="username" required />
 				</label>
-				<label class="mb-10">
+				<label>
 					Password
 					<input type="password" name="password" required />
 				</label>
-				<GradientButton shadow pill class="flex self-center active:bg-blue-600">
+				<button
+					class="flex cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+					formaction="?/register"
+				>
 					Register
-				</GradientButton>
+				</button>
 			</form>
 			<p class="mt-2 text-center font-semibold text-red-500">{form?.message ?? ''}</p>
 		</TabItem>
@@ -72,5 +73,25 @@
 	input:focus {
 		border-color: #3b82f6; /* blue-500 */
 		outline: none;
+	}
+
+	button {
+		display: flex;
+		border-radius: 9999px;
+		border: 2px solid var(--color-primary-500);
+		padding: calc(var(--spacing) * 4);
+		width: 50%;
+		align-self: center;
+		justify-content: center;
+	}
+
+	button:hover {
+		background-color: var(--color-primary-500);
+		color: white;
+	}
+
+	button:active {
+		background-color: var(--color-primary-700);
+		color: white;
 	}
 </style>
