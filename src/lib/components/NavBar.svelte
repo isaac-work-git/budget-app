@@ -29,11 +29,11 @@
 	});
 </script>
 
-<div class="h-80">
+<div class="h-16 bg-gray-100 dark:bg-gray-900">
 	<Navbar {navStatus} hamburgerMenu={false}>
 		{#snippet brand()}
 			<NavBrand siteName="BUDGT">
-				<img width="30" src="" alt="Budget icon" />
+				<!-- <img width="30" src="" alt="Budget icon" /> -->
 			</NavBrand>
 		{/snippet}
 		{#snippet navSlotBlock()}
@@ -48,7 +48,6 @@
 					>
 						<DropdownHeader class="px-4 py-2">
 							<span class="block text-sm text-gray-900 dark:text-white">Bonnie Green</span>
-							<span class="block truncate text-sm font-medium">name@flowbite.com</span>
 						</DropdownHeader>
 						<!-- <DropdownUl>
 							<DropdownLi href="/">Dashboard</DropdownLi>
@@ -56,9 +55,9 @@
 							<DropdownLi href="/components/footer">Footer</DropdownLi>
 							<DropdownLi href="/components">Alert</DropdownLi>
 						</DropdownUl> -->
-						<DropdownFooter class="px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
-							>Sign out</DropdownFooter
-						>
+						<DropdownFooter class="px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600">
+							Sign out
+						</DropdownFooter>
 					</Dropdown>
 				</div>
 				<NavHamburger {toggleNav} />
