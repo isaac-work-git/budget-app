@@ -3,12 +3,19 @@
 </script>
 
 <div class="grid grid-cols-3 items-center gap-2">
-	<input
+	<!-- <input
 		type="text"
 		bind:value={item.description}
 		placeholder="Description"
 		class="rounded-lg bg-blue-300 p-2"
-	/>
+	/> -->
+
+	<dropdown
+		label={item.description}
+		options={[]}
+		placeholder="Description"
+		class="rounded-lg bg-blue-300 p-2"
+	></dropdown>
 
 	<input
 		type="text"

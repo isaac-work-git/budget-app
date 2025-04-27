@@ -45,28 +45,34 @@
 		if (hiddenInput) hiddenInput.value = JSON.stringify(items);
 	});
 
-	// Helper to get the current month in "YYYY-MM" format
-	function getCurrentMonth() {
-		const now = new Date();
-		return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-	}
+	let groceryItems = $state(
+		(data.groceryItems ?? []).map((item) => {
+			const { id, amount, userId } = item as { id: string; amount: number; userId: string };
+			const [year, Month, _, weekNumber] = id.split('-');
+			const yearMonth = `${year}-${Month}`;
 
-	let groceryItems = $state<{ week: number; amount: number | null; month: string }[]>([
-		{ week: 1, amount: null, month: getCurrentMonth() },
-		{ week: 2, amount: null, month: getCurrentMonth() },
-		{ week: 3, amount: null, month: getCurrentMonth() },
-		{ week: 4, amount: null, month: getCurrentMonth() },
-		{ week: 5, amount: null, month: getCurrentMonth() }
-	]);
+			return {
+				id,
+				amount,
+				userId,
+				month: yearMonth,
+				week: Number(weekNumber)
+			};
+		})
+	);
 
 	let groceryTotal = $derived.by(() => {
-		return groceryItems.reduce((sum, item) => sum + (item.amount ?? 0), 0);
+		return groceryItems.reduce((sum, item) => {
+			const amount = typeof item.amount === 'number' ? item.amount : 0;
+			return sum + amount;
+		}, 0);
 	});
 </script>
 
 <NavBar />
 
-<h1 class="flex px-10 md:mt-15 md:mb-20">Hi, {data.user.username}!</h1>
+<h1 class="flex px-10 md:mt-15">Welcome back, {data.user.username}!</h1>
+<h2 class="flex px-10 text-xl md:mb-20">Let's budget.</h2>
 
 <main>
 	<section class="m-10 grid grid-cols-1 justify-center gap-6 md:grid-cols-3">
@@ -171,7 +177,8 @@
 			<!-- Total row -->
 			<div class="mt-4 grid grid-cols-3 border-t border-black pt-2 text-center font-semibold">
 				<p>Total</p>
-				<p>
+				<!-- #FIXME: Make this based on a set grocery value -->
+				<p class={`${groceryTotal < 0 ? 'text-red-600' : 'text-green-600'}`}>
 					{new Intl.NumberFormat('en-US', {
 						style: 'currency',
 						currency: 'USD'
@@ -180,9 +187,14 @@
 				<p></p>
 			</div>
 		</form>
-		<form class="w-1/3 rounded-xl bg-blue-500 p-4">
-			<h1>Fun Spending Report</h1>
-			<p id="currencyDisplay" class="rounded-lg bg-blue-300">0</p>
+		<form class="flex w-1/3 flex-col gap-4 rounded-xl bg-blue-500 p-4">
+			<h1 class="col-span-4 text-white">Fun Spending Report</h1>
+			<div class="flex flex-row">
+				<h1 class="w-1/4 justify-center">Name</h1>
+				<h1 class="w-1/4 justify-center">Amount</h1>
+				<h1 class="w-1/4 justify-center">Balance</h1>
+				<h1 class="w-1/4 justify-center">Month</h1>
+			</div>
 		</form>
 	</section>
 </main>

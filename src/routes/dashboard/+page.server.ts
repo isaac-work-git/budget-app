@@ -17,10 +17,38 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.select()
 		.from(table.expenses)
 		.where(eq(table.expenses.userId, locals.user.id)); // if you're scoping by user
+	// Fetch existing groceries
+	let groceryItems = await db
+		.select()
+		.from(table.grocery)
+		.where(eq(table.grocery.userId, locals.user.id));
+
+
+
+	// If empty, create default weeks
+	if (groceryItems.length === 0) {
+		const now = new Date();
+		const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+		const newGroceryItems = Array.from({ length: 5 }, (_, i) => ({
+			id: `${month}-week-${i + 1}`,
+			amount: 0,
+			userId: locals.user.id
+		}));
+
+		await db.insert(table.grocery).values(newGroceryItems);
+
+		// Fetch again after inserting
+		groceryItems = await db
+			.select()
+			.from(table.grocery)
+			.where(eq(table.grocery.userId, locals.user.id));
+	}
 
 	return {
 		user: safeUser,
-		expenses: userExpenses as { description: string; amount: number }[]
+		expenses: userExpenses as { description: string; amount: number }[],
+		groceryItems
 	};
 };
 
@@ -82,8 +110,6 @@ export const actions: Actions = {
 	update_grocery: async (event) => {
 		const formData = await event.request.formData();
 		const rawGroceryItem = formData.get('groceryItem') as string;
-		const cleanedGroceryItem = rawGroceryItem.replace(/[^0-9.]/g, '');
-		const parsedGrocery = parseFloat(cleanedGroceryItem);
 
 		if (!event.locals.user) {
 			return fail(401, { message: 'Unauthorized' });
@@ -91,10 +117,15 @@ export const actions: Actions = {
 
 		try {
 			const groceryItem = JSON.parse(rawGroceryItem);
+			const amount = parseFloat(groceryItem.amount);
+			if (isNaN(amount)) {
+				console.error('Invalid amount value:', groceryItem.amount);
+				return fail(400, { message: 'Invalid amount value' });
+			}
 
 			await db
 				.update(table.grocery)
-				.set({ amount: parsedGrocery })
+				.set({ amount })
 				.where(
 					and(
 						eq(table.grocery.userId, event.locals.user.id),
@@ -106,6 +137,7 @@ export const actions: Actions = {
 			console.error('Failed to update grocery item:', error);
 			return fail(500, { message: 'Server error updating grocery' });
 		}
+
 		return { success: true };
 	}
 };
