@@ -20,7 +20,7 @@ export const expenses = sqliteTable('expenses', {
 	id: text('id').primaryKey(),
 	description: text('description').notNull(),
 	amount: real('amount').notNull(),
-	realAmount: real('real_amount').notNull(),
+	actualAmount: real('actual_amount').notNull(),
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id)

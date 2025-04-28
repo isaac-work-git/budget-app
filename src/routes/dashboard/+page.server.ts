@@ -20,7 +20,8 @@ const DEFAULT_EXPENSES = [
 	{ description: 'Ashtyn Fun' },
 	{ description: 'Isaac Fun' },
 	{ description: 'Wells Fun' },
-	{ description: 'Savings Deposit' }
+	{ description: 'Savings Deposit' },
+	{ description: 'Other' }
 ];
 
 
@@ -163,11 +164,14 @@ export const actions: Actions = {
 			// Update expense based on description + userId
 			await db.update(table.expenses)
 				.set({
-					amount: expense.estimatedAmount // updating amount = estimated budget
+					amount: expense.estimatedAmount,
+					actualAmount: expense.actualAmount
 				})
 				.where(
-					eq(table.expenses.userId, locals.user.id),
-					eq(table.expenses.description, expense.description)
+					and(
+						eq(table.expenses.userId, locals.user.id),
+						eq(table.expenses.description, String(expense.description))
+					)
 				);
 
 			// Optional: if you want to also store actualAmount separately, you can expand the schema later
@@ -178,8 +182,6 @@ export const actions: Actions = {
 
 		return { success: true };
 	},
-
-
 
 	update_grocery: async (event) => {
 		const formData = await event.request.formData();

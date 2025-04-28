@@ -117,9 +117,7 @@
 		<Card shadow="xl" size="xl">
 			<form method="POST" action="?/add_expense" class="flex flex-col gap-4 p-4">
 				<h1 class="col-span-2 dark:text-white">Expected Expenses</h1>
-
-				<ExpenseTable {items} />
-
+				<ExpenseTable bind:items />
 				<!-- Hidden field to hold serialized data -->
 				<input type="hidden" name="expenses" bind:this={hiddenInput} />
 			</form>
