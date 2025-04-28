@@ -6,6 +6,24 @@ import { db } from '$lib/server/db';
 import { and, eq } from 'drizzle-orm';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
 
+const DEFAULT_EXPENSES = [
+	{ description: 'Rent/Mortgage' },
+	{ description: 'Tithing' },
+	{ description: 'Electricity Bill' },
+	{ description: 'Groceries' },
+	{ description: 'Dining Out' },
+	{ description: 'Car Payment' },
+	{ description: 'Insurance' },
+	{ description: 'Gas' },
+	{ description: '529 Plan' },
+	{ description: 'Toiletries' },
+	{ description: 'Ashtyn Fun' },
+	{ description: 'Isaac Fun' },
+	{ description: 'Wells Fun' },
+	{ description: 'Savings Deposit' }
+];
+
+
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
 		return redirect(302, '/');
@@ -13,10 +31,26 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	const [fullUser] = await db.select().from(table.user).where(eq(table.user.id, locals.user.id));
 	const { passwordHash, ...safeUser } = fullUser; // remove password
-	const userExpenses = await db
-		.select()
-		.from(table.expenses)
-		.where(eq(table.expenses.userId, locals.user.id)); // if you're scoping by user
+	// Check existing expenses
+	let userExpenses = await db.select().from(table.expenses).where(eq(table.expenses.userId, locals.user.id));
+
+	// ✅ Auto-create default expenses if user has none
+	if (userExpenses.length === 0) {
+		console.log('No expenses found. Creating default expenses...');
+		await db.insert(table.expenses).values(
+			DEFAULT_EXPENSES.map((exp) => ({
+				id: generateId(),
+				description: exp.description,
+				amount: 0,
+				realAmount: 0,
+				userId: locals.user.id
+			}))
+		);
+
+		// ✅ Fetch again after inserting
+		userExpenses = await db.select().from(table.expenses).where(eq(table.expenses.userId, locals.user.id));
+	}
+
 	// Fetch existing groceries
 	let groceryItems = await db
 		.select()
@@ -47,7 +81,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	return {
 		user: safeUser,
-		expenses: userExpenses as { description: string; amount: number }[],
+		expenses: userExpenses,
 		groceryItems
 	};
 };
@@ -106,6 +140,46 @@ export const actions: Actions = {
 			success: true
 		};
 	},
+
+	update_expense: async ({ request, locals }) => {
+		if (!locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		const formData = await request.formData();
+		const rawExpense = formData.get('expense');
+
+		if (typeof rawExpense !== 'string') {
+			return fail(400, { message: 'Invalid data' });
+		}
+
+		try {
+			const expense = JSON.parse(rawExpense);
+
+			if (!expense.description) {
+				return fail(400, { message: 'Missing expense description' });
+			}
+
+			// Update expense based on description + userId
+			await db.update(table.expenses)
+				.set({
+					amount: expense.estimatedAmount // updating amount = estimated budget
+				})
+				.where(
+					eq(table.expenses.userId, locals.user.id),
+					eq(table.expenses.description, expense.description)
+				);
+
+			// Optional: if you want to also store actualAmount separately, you can expand the schema later
+		} catch (err) {
+			console.error('Failed to update expense', err);
+			return fail(500, { message: 'Internal Server Error' });
+		}
+
+		return { success: true };
+	},
+
+
 
 	update_grocery: async (event) => {
 		const formData = await event.request.formData();
