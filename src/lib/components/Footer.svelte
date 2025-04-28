@@ -4,7 +4,7 @@
 </script>
 
 <Footer
-	class="absolute bottom-0 flex w-full flex-nowrap justify-between rounded-b-none shadow-none"
+	class="sticky bottom-0 flex w-full flex-nowrap justify-between rounded-b-none shadow-none"
 	footerType="logo"
 >
 	<div class="sm:flex sm:items-center sm:justify-between">

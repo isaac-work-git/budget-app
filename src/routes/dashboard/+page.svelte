@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageServerData } from './$types';
-	import ExpenseRow from '$lib/components/ExpenseRow.svelte';
-	import ExpenseAddForm from '$lib/components/ExpenseAddForm.svelte';
 	import NavBar from '$lib/components/NavBar.svelte';
 	import GroceryRow from '$lib/components/GroceryRow.svelte';
 	import { Input, Card } from 'svelte-5-ui-lib';
+	import ExpenseTable from '$lib/components/ExpenseTable.svelte';
+	import FunTable from '$lib/components/FunTable.svelte';
 
 	interface Props {
 		data: PageServerData;
@@ -48,39 +48,28 @@
 
 	let groceryItems = $state(
 		(data.groceryItems ?? []).map((item) => {
-			const { id, amount, userId } = item as { id: string; amount: number; userId: string };
-			const [year, Month, _, weekNumber] = id.split('-');
+			const [year, Month, _, weekNumber] = (item.id as string).split('-');
 			const yearMonth = `${year}-${Month}`;
-
 			return {
-				id,
-				amount,
-				userId,
+				...item,
 				month: yearMonth,
 				week: Number(weekNumber)
 			};
 		})
 	);
-
-	let groceryTotal = $derived.by(() => {
-		return groceryItems.reduce((sum, item) => {
-			const amount = typeof item.amount === 'number' ? item.amount : 0;
-			return sum + amount;
-		}, 0);
-	});
 </script>
 
 <NavBar name={data.user.username} />
 
-<h1 class="flex px-10 md:mt-15">Welcome back, {data.user.username}!</h1>
+<h1 class="flex px-10 md:mt-15">Hello, {data.user.username}!</h1>
 <h2 class="flex px-10 text-xl md:mb-20">Let's budget.</h2>
 
 <main>
 	<section class="m-10 grid grid-cols-1 justify-center gap-6 md:grid-cols-3">
 		<Card>
-			<form method="POST" action="?/income" class="flex flex-col">
+			<form method="POST" action="?/income" class="flex flex-col gap-4 pb-4">
 				<span class="mb-6">
-					<h1 class="pb-2 dark:text-white">
+					<h1 class="pb-4 dark:text-white">
 						Monthly Income:
 						{#if income}
 							{new Intl.NumberFormat('en-US', {
@@ -94,7 +83,7 @@
 						name="income"
 						type="text"
 						placeholder="Enter amount"
-						class="rounded-xl border-none"
+						class="rounded-xl"
 						oninput={(e) => {
 							const input = e.target as HTMLInputElement;
 							input.value = input.value.replace(/[^0-9.]/g, '');
@@ -107,10 +96,8 @@
 					>Save</button
 				>
 			</form>
-		</Card>
 
-		<Card>
-			<div class="h-min p-4 dark:text-white">
+			<div class="p-4 dark:text-white">
 				<h1>
 					Expenses:
 					{new Intl.NumberFormat('en-US', {
@@ -119,7 +106,7 @@
 					}).format(total)}
 				</h1>
 			</div>
-			<div class="h-min p-4 dark:text-white">
+			<div class="p-4 dark:text-white">
 				<h1>
 					Balance:&nbsp;
 					<span class={`${balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
@@ -132,36 +119,15 @@
 			</div>
 		</Card>
 
-		<Card>
+		<Card shadow="xl" size="lg">
 			<form class="flex flex-col gap-4 dark:text-white">
 				<h1 class="col-span-3">Grocery Tracker</h1>
-				<div class="flex flex-row">
-					<h1 class="w-1/3 justify-center">Week</h1>
-					<h1 class="w-1/3 justify-center">Amount</h1>
-					<h1 class="w-1/3 justify-center">Month</h1>
-				</div>
-
-				{#each groceryItems as groceryItem, i}
-					<GroceryRow bind:groceryItem={groceryItems[i]} />
-				{/each}
-
-				<!-- Total row -->
-				<div class="mt-4 grid grid-cols-3 border-t border-black pt-2 text-center font-semibold">
-					<p>Total</p>
-					<!-- #FIXME: Make this based on a set grocery value -->
-					<p class={`${groceryTotal < 0 ? 'text-red-600' : 'text-green-600'}`}>
-						{new Intl.NumberFormat('en-US', {
-							style: 'currency',
-							currency: 'USD'
-						}).format(groceryTotal)}
-					</p>
-					<p></p>
-				</div>
+				<GroceryRow {groceryItems} />
 			</form>
 		</Card>
 	</section>
 
-	<section class="m-10 flex gap-6">
+	<section class="m-10 mb-25 flex gap-6">
 		<Card shadow="xl" size="md">
 			<form
 				method="POST"
@@ -181,12 +147,14 @@
 			>
 				<h1 class="col-span-2 dark:text-white">Expected Expenses</h1>
 
-				{#each items as item, i}
-					<ExpenseRow {item} {i} onDelete={deleteRow} />
-				{/each}
+				<ExpenseTable />
+
+				<!-- {#each items as item, i}
+					<ExpenseRow {item} {i} />
+				{/each} -->
 
 				<!-- Input row to add new items -->
-				<ExpenseAddForm draft={expenseDraft} onAdd={addRow} />
+				<!-- <ExpenseAddForm draft={expenseDraft} onAdd={addRow} /> -->
 
 				<!-- Hidden field to hold serialized data -->
 				<input type="hidden" name="expenses" bind:this={hiddenInput} />
@@ -202,21 +170,18 @@
 			</form>
 		</Card>
 
-		<form class="flex w-1/3 flex-col gap-4 rounded-xl bg-blue-500 p-4">
-			<h1 class="col-span-4 text-white">Fun Spending Report</h1>
-			<div class="flex flex-row">
-				<h1 class="w-1/4 justify-center">Name</h1>
-				<h1 class="w-1/4 justify-center">Amount</h1>
-				<h1 class="w-1/4 justify-center">Balance</h1>
-				<h1 class="w-1/4 justify-center">Month</h1>
-			</div>
-		</form>
+		<Card shadow="xl" size="md">
+			<form class="flex flex-col gap-4">
+				<h1 class="col-span-4 text-white">Fun Spending Report</h1>
+				<FunTable groceryItems />
+			</form>
+		</Card>
 	</section>
 </main>
 
 <style>
 	h1,
-	p,
+	h2,
 	form {
 		display: flex;
 		/* padding: 0 0 0 2rem; */

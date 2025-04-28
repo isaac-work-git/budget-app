@@ -39,7 +39,7 @@
 		}
 	}
 
-	const headItems = ['Week', 'Amount', 'Month'];
+	const headItems = ['Name', 'Amount', 'Balance', 'Month'];
 </script>
 
 <Table striped noborder>
@@ -62,24 +62,16 @@
 						onblur={() => saveGrocery(groceryItem)}
 					/>
 				</TableBodyCell>
-				<TableBodyCell>{groceryItem.month}</TableBodyCell>
-			</TableBodyRow>
-		{/each}
-	</TableBody>
-	{#snippet footerSlot()}
-		<tfoot>
-			<tr class="font-semibold text-gray-900 dark:text-white">
-				<th scope="row" class="px-6 py-3 text-base">Total</th>
-				<td class="px-6 py-3">
+				<TableBodyCell>
 					{new Intl.NumberFormat('en-US', {
 						style: 'currency',
 						currency: 'USD'
 					}).format(
 						groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0)
 					)}
-				</td>
-				<td></td>
-			</tr>
-		</tfoot>
-	{/snippet}
+				</TableBodyCell>
+				<TableBodyCell>{groceryItem.month}</TableBodyCell>
+			</TableBodyRow>
+		{/each}
+	</TableBody>
 </Table>
