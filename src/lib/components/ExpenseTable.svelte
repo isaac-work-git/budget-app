@@ -51,6 +51,7 @@
 						type="text"
 						class="rounded dark:text-black"
 						bind:value={items[i].actualAmount}
+						readonly={expense.description === 'Groceries'}
 						oninput={(e) => {
 							const input = e.target as HTMLInputElement;
 							input.value = input.value.replace(/[^0-9.]/g, '');

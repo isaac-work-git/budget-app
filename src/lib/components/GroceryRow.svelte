@@ -1,7 +1,15 @@
 <script lang="ts">
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, Input } from 'svelte-5-ui-lib';
 
-	let { groceryItems = $bindable() } = $props(); // array now!
+	interface Props {
+		groceryItems: any[];
+		total: number;
+	}
+	let { groceryItems = $bindable(), total = $bindable() }: Props = $props();
+
+	$effect(() => {
+		total = groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0);
+	});
 
 	async function saveGrocery(groceryItem: { id: any; amount: any }) {
 		try {
