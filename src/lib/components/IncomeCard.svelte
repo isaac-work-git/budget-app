@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Card, Input } from 'svelte-5-ui-lib';
 
-	let { income = $bindable() } = $props();
+	let { income = $bindable(), name } = $props();
 
 	async function saveIncome(e: FocusEvent) {
 		const input = e.target as HTMLInputElement;
@@ -26,11 +26,15 @@
 	}
 </script>
 
-<Card shadow="xl">
+<Card shadow="xl" size="xl">
 	<div class="flex flex-col gap-4 md:flex-row">
-		<div>
-			<h1 class="no-wrap pb-2 dark:text-white">Monthly Income:</h1>
-			<h2 class="text-xl dark:text-white">
+		<div class="flex w-full flex-col dark:text-white">
+			<h1 class="px-10">Hello, {name}!</h1>
+			<h2 class="px-10 text-xl">Let's <span class="h2-budgt">budgt.</span></h2>
+		</div>
+		<div class="flex w-full flex-col dark:text-white">
+			<h1 class="pb-2">Monthly Income:</h1>
+			<h2 class="text-xl">
 				{#if income}
 					{new Intl.NumberFormat('en-US', {
 						style: 'currency',
@@ -52,3 +56,9 @@
 		/>
 	</div>
 </Card>
+
+<style>
+	.h2-budgt {
+		color: var(--color-primary-500);
+	}
+</style>

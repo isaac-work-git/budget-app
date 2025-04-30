@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import type { PageServerData } from './$types';
 	import NavBar from '$lib/components/NavBar.svelte';
 	import GroceryRow from '$lib/components/GroceryRow.svelte';
-	import { Input, Card } from 'svelte-5-ui-lib';
+	import { Card } from 'svelte-5-ui-lib';
 	import ExpenseTable from '$lib/components/ExpenseTable.svelte';
 	import IncomeCard from '$lib/components/IncomeCard.svelte';
 
@@ -64,39 +63,32 @@
 
 <NavBar name={data.user.username} />
 
-<section id="top" class="flex gap-6">
-	<div>
-		<h1 class="flex px-10 md:mt-15">Hello, {data.user.username}!</h1>
-		<h2 class="flex px-10 text-xl md:mb-20">Let's budget.</h2>
-	</div>
-	<IncomeCard bind:income />
+<section id="top" class="m-10 mt-20 flex gap-6">
+	<IncomeCard name={data.user.username} bind:income />
 </section>
 
-<section id="groceries-graph" class="m-10 grid grid-cols-1 justify-center gap-6 md:grid-cols-3">
+<section id="groceries-graph" class="m-10 grid grid-cols-1 justify-center md:grid-cols-3">
 	<Card shadow="xl" size="lg">
-		<form class="flex flex-col gap-4 dark:text-white">
-			<h1 class="col-span-3">Grocery Tracker</h1>
+		<div class="flex flex-col gap-4 dark:text-white">
+			<h1>Grocery Tracker</h1>
 			<GroceryRow bind:groceryItems bind:total={groceryTotal} />
-		</form>
+		</div>
 	</Card>
 </section>
 
-<section id="expenses" class="m-10 mb-25 flex gap-6">
+<section id="expenses" class="m-10 mb-25 flex">
 	<Card shadow="xl" size="xl">
-		<form method="POST" action="?/add_expense" class="flex flex-col gap-4 p-4">
-			<h1 class="col-span-2 dark:text-white">Expected Expenses</h1>
+		<div class="flex flex-col gap-4 p-4">
+			<h1 class="dark:text-white">Expected Expenses</h1>
 			<ExpenseTable bind:items />
 			<!-- Hidden field to hold serialized data -->
 			<input type="hidden" name="expenses" bind:this={hiddenInput} />
-		</form>
+		</div>
 	</Card>
 </section>
 
 <style>
-	h1,
-	h2,
-	form {
+	h1 {
 		display: flex;
-		/* padding: 0 0 0 2rem; */
 	}
 </style>
