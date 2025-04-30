@@ -5,6 +5,7 @@
 	import { Card } from 'svelte-5-ui-lib';
 	import ExpenseTable from '$lib/components/ExpenseTable.svelte';
 	import IncomeCard from '$lib/components/IncomeCard.svelte';
+	import BarChart from '$lib/components/BarChart.svelte';
 
 	interface Props {
 		data: PageServerData;
@@ -68,12 +69,13 @@
 </section>
 
 <section id="groceries-graph" class="m-10 grid grid-cols-1 justify-center md:grid-cols-3">
-	<Card shadow="xl" size="lg">
+	<Card shadow="xl" size="md">
 		<div class="flex flex-col gap-4 dark:text-white">
 			<h1>Grocery Tracker</h1>
 			<GroceryRow bind:groceryItems bind:total={groceryTotal} />
 		</div>
 	</Card>
+	<BarChart {income} {items} />
 </section>
 
 <section id="expenses" class="m-10 mb-25 flex">
