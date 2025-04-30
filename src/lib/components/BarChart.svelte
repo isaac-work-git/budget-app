@@ -89,7 +89,7 @@
 	});
 </script>
 
-<Card size="xl" class="mx-10" shadow="xl">
+<Card size="xl" shadow="xl">
 	<div class="flex justify-between border-b border-gray-200 pb-3 dark:border-gray-700">
 		<dl>
 			<dt class="pb-1 text-base font-normal text-gray-500 dark:text-gray-400">Profit</dt>

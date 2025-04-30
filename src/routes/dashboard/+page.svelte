@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
-	import NavBar from '$lib/components/NavBar.svelte';
+	import NavBar from '$lib/components/ui/NavBar.svelte';
 	import GroceryRow from '$lib/components/GroceryRow.svelte';
 	import { Card } from 'svelte-5-ui-lib';
 	import ExpenseTable from '$lib/components/ExpenseTable.svelte';
@@ -64,11 +64,11 @@
 
 <NavBar name={data.user.username} />
 
-<section id="top" class="m-10 mt-20 flex gap-6">
+<section id="top" class="mt-20 flex gap-6 md:m-10">
 	<IncomeCard name={data.user.username} bind:income />
 </section>
 
-<section id="groceries-graph" class="m-10 grid grid-cols-1 justify-center md:grid-cols-3">
+<section id="groceries-graph" class="grid grid-cols-1 md:m-10 md:grid-cols-2">
 	<Card shadow="xl" size="md">
 		<div class="flex flex-col gap-4 dark:text-white">
 			<h1>Grocery Tracker</h1>
@@ -78,9 +78,9 @@
 	<BarChart {income} {items} />
 </section>
 
-<section id="expenses" class="m-10 mb-25 flex">
+<section id="expenses" class="mb-25 flex md:m-10">
 	<Card shadow="xl" size="xl">
-		<div class="flex flex-col gap-4 p-4">
+		<div class="flex flex-col gap-4 md:p-4">
 			<h1 class="dark:text-white">Expected Expenses</h1>
 			<ExpenseTable bind:items />
 			<!-- Hidden field to hold serialized data -->
