@@ -13,7 +13,6 @@
 	}
 
 	let { data }: Props = $props();
-	let hiddenInput: HTMLInputElement;
 
 	let items = $state(
 		(data.expenses ?? []).map((item) => ({
@@ -32,13 +31,6 @@
 	} else {
 		income = 0;
 	}
-
-	// let balance = $derived(income - total);
-
-	// Sync hidden input with the serialized `items`
-	$effect(() => {
-		if (hiddenInput) hiddenInput.value = JSON.stringify(items);
-	});
 
 	let groceryItems = $state(
 		(data.groceryItems ?? []).map((item) => {
@@ -63,31 +55,35 @@
 </script>
 
 <NavBar name={data.user.username} />
+<main class="flex flex-col gap-10">
+	<section id="top" class="mx-5 mt-10 gap-6 md:mx-10 md:mt-20 md:w-auto">
+		<IncomeCard name={data.user.username} bind:income />
+	</section>
 
-<section id="top" class="mt-20 flex gap-6 md:m-10">
-	<IncomeCard name={data.user.username} bind:income />
-</section>
-
-<section id="groceries-graph" class="grid grid-cols-1 md:m-10 md:grid-cols-2">
-	<Card shadow="xl" size="md">
-		<div class="flex flex-col gap-4 dark:text-white">
-			<h1>Grocery Tracker</h1>
-			<GroceryRow bind:groceryItems bind:total={groceryTotal} />
+	<!-- <section id="groceries-graph" class="grid grid-cols-1 md:m-10 md:grid-cols-2"> -->
+	<section id="groceries-graph" class="flex flex-col gap-10 md:m-10 md:flex-row">
+		<div class="mx-5 flex flex-col gap-4 md:mx-0 md:w-1/2">
+			<Card shadow="xl" size="lg">
+				<div class="dark:text-white">
+					<h1>Grocery Tracker</h1>
+					<GroceryRow bind:groceryItems bind:total={groceryTotal} />
+				</div>
+			</Card>
 		</div>
-	</Card>
-	<BarChart {income} {items} />
-</section>
-
-<section id="expenses" class="mb-25 flex md:m-10">
-	<Card shadow="xl" size="xl">
-		<div class="flex flex-col gap-4 md:p-4">
-			<h1 class="dark:text-white">Expected Expenses</h1>
-			<ExpenseTable bind:items />
-			<!-- Hidden field to hold serialized data -->
-			<input type="hidden" name="expenses" bind:this={hiddenInput} />
+		<div class="mx-5 flex flex-col gap-4 md:mx-0 md:w-1/2">
+			<BarChart {income} {items} />
 		</div>
-	</Card>
-</section>
+	</section>
+
+	<section id="expenses" class="mx-5 mb-25 md:mx-10">
+		<Card shadow="xl" size="xl">
+			<div class="flex flex-col gap-4 md:p-4">
+				<h1 class="dark:text-white">Expected Expenses</h1>
+				<ExpenseTable bind:items />
+			</div>
+		</Card>
+	</section>
+</main>
 
 <style>
 	h1 {

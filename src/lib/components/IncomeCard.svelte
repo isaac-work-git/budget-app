@@ -29,8 +29,8 @@
 <Card shadow="xl" size="xl">
 	<div class="flex flex-col gap-4 md:flex-row">
 		<div class="flex w-full flex-col dark:text-white">
-			<h1 class="px-10">Hello, {name}!</h1>
-			<h2 class="px-10 text-xl">Let's <span class="h2-budgt">budgt.</span></h2>
+			<h1 class="md:px-10">Hello, {name}!</h1>
+			<h2 class="text-xl md:px-10">Let's <span class="h2-budgt">budgt.</span></h2>
 		</div>
 		<div class="flex w-full flex-col dark:text-white">
 			<h1 class="pb-2">Monthly Income:</h1>
