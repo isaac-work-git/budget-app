@@ -31,10 +31,6 @@ export const actions: Actions = {
 
         const normalizedUsername = (username as string).toLowerCase();
         const results = await db.select().from(table.user).where(eq(table.user.username, normalizedUsername));
-        if (results.length > 0) {
-            return fail(400, { message: 'Username already exists' });
-        }
-
         const existingUser = results.at(0) as table.User;
         if (!existingUser) {
             return fail(400, { message: 'Incorrect username or password' });
