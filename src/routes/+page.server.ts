@@ -6,13 +6,6 @@ import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
-
-const testHashed = await hash('password123');
-const testIsValid = await verify(testHashed, 'password123');
-
-console.log('Hash:', testHashed);
-console.log('Verified:', testIsValid);
-
 export const load: PageServerLoad = async (event) => {
     if (event.locals.user) {
         return redirect(302, '/dashboard');
