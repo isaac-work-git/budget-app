@@ -34,7 +34,7 @@
 
 	let groceryItems = $state(
 		(data.groceryItems ?? []).map((item) => {
-			const [year, Month, _, weekNumber] = (item.id as string).split('-');
+			const [__, year, Month, _, weekNumber] = (item.id as string).split('-');
 			const yearMonth = `${year}-${Month}`;
 			return {
 				...item,
@@ -54,10 +54,10 @@
 	});
 </script>
 
-<NavBar name={data.user.username} />
+<NavBar name={data.user.displayName} />
 <main class="flex flex-col gap-10">
 	<section id="top" class="mx-5 mt-10 gap-6 md:mx-10 md:mt-20 md:w-auto">
-		<IncomeCard name={data.user.username} bind:income />
+		<IncomeCard name={data.user.displayName} bind:income />
 	</section>
 
 	<!-- <section id="groceries-graph" class="grid grid-cols-1 md:m-10 md:grid-cols-2"> -->
@@ -70,7 +70,7 @@
 				</div>
 			</Card>
 		</div>
-		<div class="mx-5 flex flex-col gap-4 md:mx-0 md:w-1/2">
+		<div class="mx-5 flex flex-col gap-2 md:mx-0 md:w-1/2">
 			<BarChart {income} {items} />
 		</div>
 	</section>

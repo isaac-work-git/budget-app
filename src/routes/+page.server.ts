@@ -6,6 +6,7 @@ import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
+
 export const load: PageServerLoad = async (event) => {
     if (event.locals.user) {
         return redirect(302, '/dashboard');
@@ -63,6 +64,12 @@ export const actions: Actions = {
             return fail(400, { message: 'Invalid password' });
         }
 
+        const normalizedUsername = (username as string).toLowerCase();
+        const results = await db.select().from(table.user).where(eq(table.user.username, normalizedUsername));
+        if (results.length > 0) {
+            return fail(400, { message: 'Username already exists' });
+        }
+
         const userId = generateUserId();
         const passwordHash = await hash(password, {
             // recommended minimum parameters
@@ -73,7 +80,7 @@ export const actions: Actions = {
         });
 
         try {
-            await db.insert(table.user).values({ id: userId, username, passwordHash });
+            await db.insert(table.user).values({ id: userId, username: normalizedUsername, displayName: username, passwordHash });
 
             const sessionToken = auth.generateSessionToken();
             const session = await auth.createSession(sessionToken, userId);
@@ -97,7 +104,7 @@ function validateUsername(username: unknown): username is string {
         typeof username === 'string' &&
         username.length >= 3 &&
         username.length <= 31 &&
-        /^[a-z0-9_-]+$/.test(username)
+        /^[a-zA-Z0-9_-]+$/.test(username)
     );
 }
 

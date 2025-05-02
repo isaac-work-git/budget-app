@@ -24,7 +24,6 @@ const DEFAULT_EXPENSES = [
 	{ description: 'Other' }
 ];
 
-
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
 		return redirect(302, '/');
@@ -43,7 +42,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 				id: generateId(),
 				description: exp.description,
 				amount: 0,
-				realAmount: 0,
+				actualAmount: 0,
 				userId: locals.user.id
 			}))
 		);
@@ -58,15 +57,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.from(table.grocery)
 		.where(eq(table.grocery.userId, locals.user.id));
 
-
-
 	// If empty, create default weeks
 	if (groceryItems.length === 0) {
 		const now = new Date();
 		const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
 		const newGroceryItems = Array.from({ length: 5 }, (_, i) => ({
-			id: `${month}-week-${i + 1}`,
+			id: `${locals.user.id}-${month}-week-${i + 1}`,
 			amount: 0,
 			userId: locals.user.id
 		}));

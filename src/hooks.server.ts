@@ -3,6 +3,7 @@ import * as auth from '$lib/server/auth.js';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
+	const displayName = event.cookies.get('displayName');
 
 	if (!sessionToken) {
 		event.locals.user = null;
