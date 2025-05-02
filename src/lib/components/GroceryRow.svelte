@@ -6,7 +6,6 @@
 		total: number;
 	}
 	let { groceryItems = $bindable(), total = $bindable() }: Props = $props();
-	console.log(groceryItems);
 
 	$effect(() => {
 		total = groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0);
