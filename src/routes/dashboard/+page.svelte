@@ -60,7 +60,6 @@
 		<IncomeCard name={data.user.displayName} bind:income />
 	</section>
 
-	<!-- <section id="groceries-graph" class="grid grid-cols-1 md:m-10 md:grid-cols-2"> -->
 	<section id="groceries-graph" class="flex flex-col gap-10 md:m-10 md:flex-row">
 		<div class="mx-5 flex flex-col gap-4 md:mx-0 md:w-1/2">
 			<Card shadow="xl" size="lg">
