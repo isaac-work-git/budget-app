@@ -26,7 +26,7 @@
 	}
 </script>
 
-<Card shadow="xl" size="xl">
+<Card shadow="xl" class="max-w-screen">
 	<div class="flex flex-col gap-4 md:flex-row">
 		<div class="flex w-full flex-col dark:text-white">
 			<h1 class="md:px-10">Hello, {name}!</h1>
