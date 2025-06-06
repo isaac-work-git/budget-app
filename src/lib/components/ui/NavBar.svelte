@@ -37,7 +37,6 @@
 				siteName="BUDGT"
 				spanClass="whitespace-nowrap text-xl font-semibold text dark:text-white"
 			>
-				<!-- <img width="30" src="" alt="Budget icon" /> -->
 			</NavBrand>
 		{/snippet}
 		{#snippet navSlotBlock()}
