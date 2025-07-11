@@ -1,7 +1,6 @@
 <script lang="ts">
 	import ExpenseTable from "$lib/components/ExpenseTable.svelte";
 	import GroceryRow from "$lib/components/GroceryRow.svelte";
-	import { Card } from "svelte-5-ui-lib";
 	import type { PageServerData } from "./$types";
 	import NavBar from "$lib/components/ui/NavBar.svelte";
 
@@ -46,23 +45,23 @@
     <NavBar name={data.user.displayName} />
     <section id="groceries-graph" class="flex flex-col gap-10 md:m-10 md:flex-row">
 		<div class="mx-5 flex flex-col gap-4 md:mx-0 md:w-1/2">
-			<Card shadow="xl" size="xl">
+			<card shadow="xl" size="xl">
 				<div class="dark:text-white">
 					<h1>Grocery Tracker</h1>
 					<GroceryRow bind:groceryItems bind:total={groceryTotal} />
 				</div>
-			</Card>
+			</card>
 		</div>
 		
 	</section>
 
     <section id="expenses" class="mx-5 mb-25 md:mx-10">
         
-        <Card shadow="xl" class="max-w-screen">
+        <card shadow="xl" class="max-w-screen">
             <div class="flex flex-col gap-4 md:p-4">
                 <h1 class="dark:text-white">Expected Expenses</h1>
                 <ExpenseTable bind:items />
             </div>
-        </Card>
+        </card>
     </section>
 </div>
