@@ -64,7 +64,10 @@
 					<input
 						name="amount"
 						type="text"
-						class="input rounded"
+						step="0.01"
+						min="0"
+						placeholder="0.00"
+						class="input rounded input-bordered w-full"
 						bind:value={groceryItems[i].amount}
 						oninput={(e) => {
 							const input = e.target as HTMLInputElement;
@@ -77,21 +80,19 @@
 				<td>{groceryItem.month}</td>
 			</tr>
 		{/each}
-		</tbody>
-	{#snippet footerSlot()}
-		<tfoot>
-			<tr class="font-semibold text-gray-900 dark:text-white">
-				<th scope="row" class="px-6 py-3 text-base">Total</th>
-				<td class="px-6 py-3">
-					{new Intl.NumberFormat('en-US', {
-						style: 'currency',
-						currency: 'USD'
-					}).format(
-						groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0)
-					)}
-				</td>
-				<td></td>
-			</tr>
-		</tfoot>
-	{/snippet}
+	</tbody>
+	<tfoot>
+		<tr class="font-semibold text-base">
+			<th scope="row" class="px-6 py-3">Total</th>
+			<td class="px-6 py-3">
+				{new Intl.NumberFormat('en-US', {
+					style: 'currency',
+					currency: 'USD'
+				}).format(
+					groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0)
+				)}
+			</td>
+			<td></td>
+		</tr>
+	</tfoot>
 </table>

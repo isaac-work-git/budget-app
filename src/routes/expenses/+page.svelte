@@ -1,7 +1,7 @@
 <!-- +page.svelte -->
 <script lang="ts">
 	import ExpenseTable from "$lib/components/ExpenseTable.svelte";
-	import GroceryRow from "$lib/components/GroceryRow.svelte";
+	import GroceryRow from "$lib/components/tables/GroceryRow.svelte";
 	import type { PageServerData } from "./$types";
 	import NavBar from "$lib/components/ui/NavBar.svelte";
 
@@ -45,12 +45,11 @@
 
 <div>
 	<NavBar name={data?.user?.displayName ?? 'User'} />
-	<section id="groceries-graph" class="flex flex-col gap-10 m-10 md:flex-row">
-		<div class="card shadow-xl bg-neutral text-neutral-content gap-4 md:w-1/2">
-			<h1 class="text-2xl font-bold p-4">Grocery Tracker</h1>
-			<div class="p-4">
-				<GroceryRow bind:groceryItems bind:total={groceryTotal} />
-			</div>
+	<section class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+		<input type="checkbox" />
+		<h1 class="collapse-title text-2xl font-bold p-4">Grocery Tracker</h1>
+		<div class="collapse-content p-4">
+			<GroceryRow bind:groceryItems bind:total={groceryTotal} />
 		</div>
 	</section>
 
