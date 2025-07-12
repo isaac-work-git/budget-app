@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, Input } from 'svelte-5-ui-lib';
-
 	interface Props {
 		groceryItems: any[];
 		total: number;
@@ -50,17 +48,23 @@
 	const headItems = ['Week', 'Amount', 'Month'];
 </script>
 
-<Table striped noborder>
-	<TableHead {headItems} />
-	<TableBody class="divide-y">
+<table class="table table-zebra w-full">
+	<thead>
+		<tr>
+			{#each headItems as item}
+				<th class="px-6 py-3 text-base font-semibold">{item}</th>
+			{/each}
+		</tr>
+	</thead>
+	<tbody class="divide-y">
 		{#each groceryItems as groceryItem, i}
-			<TableBodyRow>
-				<TableBodyCell>{groceryItem.week}</TableBodyCell>
-				<TableBodyCell>
-					<Input
+			<tr>
+				<td>{groceryItem.week}</td>
+				<td>
+					<input
 						name="amount"
 						type="text"
-						class="rounded dark:text-black"
+						class="input rounded"
 						bind:value={groceryItems[i].amount}
 						oninput={(e) => {
 							const input = e.target as HTMLInputElement;
@@ -69,11 +73,11 @@
 						}}
 						onblur={() => saveGrocery(groceryItem)}
 					/>
-				</TableBodyCell>
-				<TableBodyCell>{groceryItem.month}</TableBodyCell>
-			</TableBodyRow>
+				</td>
+				<td>{groceryItem.month}</td>
+			</tr>
 		{/each}
-	</TableBody>
+		</tbody>
 	{#snippet footerSlot()}
 		<tfoot>
 			<tr class="font-semibold text-gray-900 dark:text-white">
@@ -90,4 +94,4 @@
 			</tr>
 		</tfoot>
 	{/snippet}
-</Table>
+</table>

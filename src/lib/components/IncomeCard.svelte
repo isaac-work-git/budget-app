@@ -26,11 +26,11 @@
 	}
 </script>
 
-<Card shadow="xl" class="max-w-screen">
-	<div class="flex flex-col gap-4 md:flex-row">
+<div class="card max-w-screen shadow-xl bg-neutral text-neutral-content mb-10">
+	<div class="flex flex-col gap-4 md:flex-row card-body">
 		<div class="flex w-full flex-col dark:text-white">
 			<h1 class="md:px-10">Hello, {name}!</h1>
-			<h2 class="text-xl md:px-10">Let's <span class="h2-budgt">budgt.</span></h2>
+			<h2 class="text-xl md:px-10">Let's <span class="text-primary">budgt.</span></h2>
 		</div>
 		<div class="flex w-full flex-col dark:text-white">
 			<h1 class="pb-2">Monthly Income:</h1>
@@ -44,7 +44,8 @@
 			</h2>
 		</div>
 
-		<Input
+		<input
+			class="input input-bordered w-full md:w-1/3 self-center"
 			name="income"
 			type="text"
 			placeholder="Enter amount"
@@ -55,10 +56,4 @@
 			onblur={saveIncome}
 		/>
 	</div>
-</Card>
-
-<style>
-	.h2-budgt {
-		color: var(--color-primary-500);
-	}
-</style>
+</div>

@@ -1,7 +1,6 @@
+<!-- ExpenseTable.svelte -->
 <script lang="ts">
-	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, Input } from 'svelte-5-ui-lib';
-
-	let { items = $bindable() } = $props(); // <-- items passed from parent page!
+	let { items = $bindable() } = $props();
 
 	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
@@ -22,70 +21,90 @@
 			console.error('Error saving expense item', error);
 		}
 	}
+
+	// Handle input changes more robustly
+	function handleNumberInput(e: Event, index: number, field: 'estimatedAmount' | 'actualAmount') {
+		const input = e.target as HTMLInputElement;
+		// Allow numbers and decimal points
+		const sanitized = input.value.replace(/[^0-9.]/g, '');
+		
+		// Prevent multiple decimal points
+		const parts = sanitized.split('.');
+		const cleanValue = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : sanitized;
+		
+		input.value = cleanValue;
+		items[index][field] = cleanValue ? parseFloat(cleanValue) : 0;
+	}
+
+	// Calculate totals using $derived for Svelte 5 runes mode
+	const estimatedTotal = $derived(
+		items.reduce((sum: number, item: any) => sum + (Number(item.estimatedAmount) || 0), 0)
+	);
+	const actualTotal = $derived(
+		items.reduce((sum: number, item: any) => sum + (Number(item.actualAmount) || 0), 0)
+	);
 </script>
 
-<Table striped noborder>
-	<TableHead {headItems} />
-	<TableBody class="divide-y">
-		{#each items as expense, i}
-			<TableBodyRow
-				class={`${expense.actualAmount > expense.estimatedAmount ? 'bg-red-100 transition-colors duration-300 dark:bg-red-700' : 'transition-colors duration-300'}`}
-			>
-				<TableBodyCell>{expense.description}</TableBodyCell>
-				<TableBodyCell>
-					<Input
-						type="text"
-						class="rounded dark:text-black"
-						bind:value={items[i].estimatedAmount}
-						oninput={(e) => {
-							const input = e.target as HTMLInputElement;
-							input.value = input.value.replace(/[^0-9.]/g, '');
-							items[i].estimatedAmount = input.value ? parseFloat(input.value) : 0;
-						}}
-						onblur={() => saveExpense(expense)}
-					/>
-				</TableBodyCell>
-
-				<TableBodyCell>
-					<Input
-						type="text"
-						class="rounded dark:text-black"
-						bind:value={items[i].actualAmount}
-						readonly={expense.description === 'Groceries'}
-						oninput={(e) => {
-							const input = e.target as HTMLInputElement;
-							input.value = input.value.replace(/[^0-9.]/g, '');
-							items[i].actualAmount = input.value ? parseFloat(input.value) : 0;
-						}}
-						onblur={() => saveExpense(expense)}
-					/>
-				</TableBodyCell>
-			</TableBodyRow>
-		{/each}
-	</TableBody>
-	{#snippet footerSlot()}
+<div class="overflow-x-auto">
+	<table class="table table-zebra">
+		<thead>
+			<tr>
+				{#each headItems as item}
+					<th class="px-6 py-3 text-base font-semibold">{item}</th>
+				{/each}
+			</tr>
+		</thead>
+		<tbody>
+			{#each items as expense, i}
+				<tr
+					class={`${expense.actualAmount > expense.estimatedAmount ? 'bg-red-100 transition-colors duration-300 dark:bg-red-700' : 'transition-colors duration-300'}`}
+				>
+					<td class="font-medium">{expense.description}</td>
+					<td>
+						<input
+							type="number"
+							step="0.01"
+							min="0"
+							class="input input-bordered w-full max-w-xs"
+							bind:value={items[i].estimatedAmount}
+							oninput={(e) => handleNumberInput(e, i, 'estimatedAmount')}
+							onblur={() => saveExpense(expense)}
+							placeholder="0.00"
+						/>
+					</td>
+					<td>
+						<input
+							type="number"
+							step="0.01"
+							min="0"
+							class="input input-bordered w-full max-w-xs"
+							class:input-disabled={expense.description === 'Groceries'}
+							bind:value={items[i].actualAmount}
+							readonly={expense.description === 'Groceries'}
+							oninput={(e) => handleNumberInput(e, i, 'actualAmount')}
+							onblur={() => saveExpense(expense)}
+							placeholder="0.00"
+						/>
+					</td>
+				</tr>
+			{/each}
+		</tbody>
 		<tfoot>
-			<tr class="font-semibold text-gray-900 dark:text-white">
+			<tr class="font-semibold bg-base-200">
 				<th scope="row" class="px-6 py-3 text-base">Total</th>
-
 				<td class="px-6 py-3">
-					{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-						items.reduce(
-							(sum: any, item: { estimatedAmount: any }) => sum + (item.estimatedAmount ?? 0),
-							0
-						)
-					)}
+					{new Intl.NumberFormat('en-US', { 
+						style: 'currency', 
+						currency: 'USD' 
+					}).format(estimatedTotal)}
 				</td>
-
 				<td class="px-6 py-3">
-					{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-						items.reduce(
-							(sum: any, item: { actualAmount: any }) => sum + (item.actualAmount ?? 0),
-							0
-						)
-					)}
+					{new Intl.NumberFormat('en-US', { 
+						style: 'currency', 
+						currency: 'USD' 
+					}).format(actualTotal)}
 				</td>
 			</tr>
 		</tfoot>
-	{/snippet}
-</Table>
+	</table>
+</div>
