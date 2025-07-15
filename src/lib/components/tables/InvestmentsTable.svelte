@@ -4,21 +4,21 @@
 
 	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
-	async function saveExpense(expense: any) {
+	async function saveInvestment(investment: any) {
 		try {
 			const formData = new FormData();
-			formData.append('expense', JSON.stringify(expense));
+			formData.append('investment', JSON.stringify(investment));
 
-			const response = await fetch('?/update_expense', {
+			const response = await fetch('?/update_investment', {
 				method: 'POST',
 				body: formData
 			});
 
 			if (!response.ok) {
-				console.error('Failed to save expense item');
+				console.error('Failed to save investment item');
 			}
 		} catch (error) {
-			console.error('Error saving expense item', error);
+			console.error('Error saving investment item', error);
 		}
 	}
 
