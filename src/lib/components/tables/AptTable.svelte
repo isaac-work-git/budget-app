@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, Input } from 'svelte-5-ui-lib';
-
 	interface Props {
 		groceryItems: any[];
 		total: number;
@@ -50,17 +48,26 @@
 	const headItems = ['Week', 'Amount', 'Month'];
 </script>
 
-<Table striped noborder>
-	<TableHead {headItems} />
-	<TableBody class="divide-y">
+<table class="table table-zebra w-full">
+	<thead>
+		<tr>
+			{#each headItems as item}
+				<th class="px-6 py-3 text-base font-semibold">{item}</th>
+			{/each}
+		</tr>
+	</thead>
+	<tbody class="divide-y">
 		{#each groceryItems as groceryItem, i}
-			<TableBodyRow>
-				<TableBodyCell>{groceryItem.week}</TableBodyCell>
-				<TableBodyCell>
-					<Input
+			<tr>
+				<td>{groceryItem.week}</td>
+				<td>
+					<input
 						name="amount"
 						type="text"
-						class="rounded dark:text-black"
+						step="0.01"
+						min="0"
+						placeholder="0.00"
+						class="input rounded input-bordered w-full"
 						bind:value={groceryItems[i].amount}
 						oninput={(e) => {
 							const input = e.target as HTMLInputElement;
@@ -69,25 +76,23 @@
 						}}
 						onblur={() => saveGrocery(groceryItem)}
 					/>
-				</TableBodyCell>
-				<TableBodyCell>{groceryItem.month}</TableBodyCell>
-			</TableBodyRow>
-		{/each}
-	</TableBody>
-	{#snippet footerSlot()}
-		<tfoot>
-			<tr class="font-semibold text-gray-900 dark:text-white">
-				<th scope="row" class="px-6 py-3 text-base">Total</th>
-				<td class="px-6 py-3">
-					{new Intl.NumberFormat('en-US', {
-						style: 'currency',
-						currency: 'USD'
-					}).format(
-						groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0)
-					)}
 				</td>
-				<td></td>
+				<td>{groceryItem.month}</td>
 			</tr>
-		</tfoot>
-	{/snippet}
-</Table>
+		{/each}
+	</tbody>
+	<tfoot>
+		<tr class="font-semibold text-base">
+			<th scope="row" class="px-6 py-3">Total</th>
+			<td class="px-6 py-3">
+				{new Intl.NumberFormat('en-US', {
+					style: 'currency',
+					currency: 'USD'
+				}).format(
+					groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0)
+				)}
+			</td>
+			<td></td>
+		</tr>
+	</tfoot>
+</table>

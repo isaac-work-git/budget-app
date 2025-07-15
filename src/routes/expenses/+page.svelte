@@ -1,26 +1,28 @@
+<!-- +page.svelte -->
 <script lang="ts">
 	import ExpenseTable from "$lib/components/ExpenseTable.svelte";
-	import GroceryRow from "$lib/components/GroceryRow.svelte";
+	import GroceryRow from "$lib/components/tables/GroceryRow.svelte";
 	import type { PageServerData } from "./$types";
 	import NavBar from "$lib/components/ui/NavBar.svelte";
 
-    interface Props {
+	interface Props {
 		data: PageServerData;
 		form: any;
 	}
 
 	let { data }: Props = $props();
 
+	// Add null safety checks and proper typing
 	let items = $state(
-		(data.expenses ?? []).map((item: { description: any; amount: any; actualAmount: any; }) => ({
+		(data?.expenses ?? []).map((item: any) => ({
 			description: item.description,
 			estimatedAmount: item.amount ?? 0, // original "amount" becomes "estimated"
 			actualAmount: item.actualAmount ?? 0 // new actualAmount starts at 0
 		}))
 	);
 
-    let groceryItems = $state(
-		(data.groceryItems ?? []).map((item) => {
+	let groceryItems = $state(
+		(data?.groceryItems ?? []).map((item: any) => {
 			const [__, year, Month, _, weekNumber] = (item.id as string).split('-');
 			const yearMonth = `${year}-${Month}`;
 			return {
@@ -42,18 +44,15 @@
 </script>
 
 <div>
-    <NavBar name={data.user.displayName} />
-    <section id="groceries-graph" class="flex flex-col gap-10 md:m-10 md:flex-row">
-		<div class="mx-5 flex flex-col gap-4 md:mx-0 md:w-1/2">
-			<card shadow="xl" size="xl">
-				<div class="dark:text-white">
-					<h1>Grocery Tracker</h1>
-					<GroceryRow bind:groceryItems bind:total={groceryTotal} />
-				</div>
-			</card>
+	<NavBar name={data?.user?.displayName ?? 'User'} />
+	<section class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+		<input type="checkbox" />
+		<h1 class="collapse-title text-2xl font-bold p-4">Grocery Tracker</h1>
+		<div class="collapse-content p-4">
+			<GroceryRow bind:groceryItems bind:total={groceryTotal} />
 		</div>
-		
 	</section>
+
 
     <section id="expenses" class="mx-5 mb-25 md:mx-10">
         
@@ -64,4 +63,5 @@
             </div>
         </card>
     </section>
-</div>
+
+	<section id="expenses" class="m-10 mb-25">
