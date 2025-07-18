@@ -1,6 +1,6 @@
 <!-- ExpenseTable.svelte -->
 <script lang="ts">
-	let { items = $bindable() } = $props();
+	let { investments = $bindable() } = $props();
 
 	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
@@ -9,7 +9,7 @@
 			const formData = new FormData();
 			formData.append('investment', JSON.stringify(investment));
 
-			const response = await fetch('?/update_investment', {
+			const response = await fetch('?update_investment', {
 				method: 'POST',
 				body: formData
 			});
@@ -33,15 +33,15 @@
 		const cleanValue = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : sanitized;
 		
 		input.value = cleanValue;
-		items[index][field] = cleanValue ? parseFloat(cleanValue) : 0;
+		investments[index][field] = cleanValue ? parseFloat(cleanValue) : 0;
 	}
 
 	// Calculate totals using $derived for Svelte 5 runes mode
 	const estimatedTotal = $derived(
-		items.reduce((sum: number, item: any) => sum + (Number(item.estimatedAmount) || 0), 0)
+		investments.reduce((sum: number, item: any) => sum + (Number(item.estimatedAmount) || 0), 0)
 	);
 	const actualTotal = $derived(
-		items.reduce((sum: number, item: any) => sum + (Number(item.actualAmount) || 0), 0)
+		investments.reduce((sum: number, item: any) => sum + (Number(item.actualAmount) || 0), 0)
 	);
 </script>
 
@@ -55,7 +55,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each items as expense, i}
+			{#each investments as expense, i}
 				<tr
 					class={`${expense.actualAmount > expense.estimatedAmount ? 'bg-red-100 transition-colors duration-300 dark:bg-red-700' : 'transition-colors duration-300'}`}
 				>
@@ -66,9 +66,9 @@
 							step="0.01"
 							min="0"
 							class="input input-bordered w-full max-w-xs"
-							bind:value={items[i].estimatedAmount}
+							bind:value={investments[i].estimatedAmount}
 							oninput={(e) => handleNumberInput(e, i, 'estimatedAmount')}
-							onblur={() => saveExpense(expense)}
+							onblur={() => saveInvestment(expense)}
 							placeholder="0.00"
 						/>
 					</td>
@@ -79,10 +79,10 @@
 							min="0"
 							class="input input-bordered w-full max-w-xs"
 							class:input-disabled={expense.description === 'Groceries'}
-							bind:value={items[i].actualAmount}
+							bind:value={investments[i].actualAmount}
 							readonly={expense.description === 'Groceries'}
 							oninput={(e) => handleNumberInput(e, i, 'actualAmount')}
-							onblur={() => saveExpense(expense)}
+							onblur={() => saveInvestment(expense)}
 							placeholder="0.00"
 						/>
 					</td>
@@ -90,7 +90,7 @@
 			{/each}
 		</tbody>
 		<tfoot>
-			<tr class="font-semibold bg-base-200">
+			<tr class="font-semibold">
 				<th scope="row" class="px-6 py-3 text-base">Total</th>
 				<td class="px-6 py-3">
 					{new Intl.NumberFormat('en-US', { 

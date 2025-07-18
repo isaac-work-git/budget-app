@@ -1,98 +1,110 @@
+<!-- ExpenseTable.svelte -->
 <script lang="ts">
-	interface Props {
-		groceryItems: any[];
-		total: number;
-	}
-	let { groceryItems = $bindable(), total = $bindable() }: Props = $props();
+	let { housing = $bindable() } = $props();
 
-	$effect(() => {
-		total = groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0);
-	});
+	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
-	async function saveGrocery(groceryItem: { id: any; amount: any }) {
+	async function saveInvestment(housing: any) {
 		try {
-			if (!groceryItem?.id || typeof groceryItem.id !== 'string') {
-				console.error('Invalid or missing groceryItem.id:', groceryItem.id);
-				return;
-			}
-
-			const amount = parseFloat(groceryItem.amount as any);
-
-			if (isNaN(amount)) {
-				console.error('Invalid amount:', groceryItem.amount);
-				return;
-			}
-
 			const formData = new FormData();
-			formData.append(
-				'groceryItem',
-				JSON.stringify({
-					id: groceryItem.id,
-					amount: amount
-				})
-			);
+			formData.append('investment', JSON.stringify(housing));
 
-			const response = await fetch('?/update_grocery', {
+			const response = await fetch('?update_housing', {
 				method: 'POST',
 				body: formData
 			});
 
 			if (!response.ok) {
-				console.error('Failed to save grocery item');
+				console.error('Failed to save housing item');
 			}
 		} catch (error) {
-			console.error('Error saving grocery item', error);
+			console.error('Error saving housing item', error);
 		}
 	}
 
-	const headItems = ['Week', 'Amount', 'Month'];
+	// Handle input changes more robustly
+	function handleNumberInput(e: Event, index: number, field: 'estimatedAmount' | 'actualAmount') {
+		const input = e.target as HTMLInputElement;
+		// Allow numbers and decimal points
+		const sanitized = input.value.replace(/[^0-9.]/g, '');
+		
+		// Prevent multiple decimal points
+		const parts = sanitized.split('.');
+		const cleanValue = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : sanitized;
+		
+		input.value = cleanValue;
+		housing[index][field] = cleanValue ? parseFloat(cleanValue) : 0;
+	}
+
+	// Calculate totals using $derived for Svelte 5 runes mode
+	const estimatedTotal = $derived(
+		housing.reduce((sum: number, item: any) => sum + (Number(item.estimatedAmount) || 0), 0)
+	);
+	const actualTotal = $derived(
+		housing.reduce((sum: number, item: any) => sum + (Number(item.actualAmount) || 0), 0)
+	);
 </script>
 
-<table class="table table-zebra w-full">
-	<thead>
-		<tr>
-			{#each headItems as item}
-				<th class="px-6 py-3 text-base font-semibold">{item}</th>
-			{/each}
-		</tr>
-	</thead>
-	<tbody class="divide-y">
-		{#each groceryItems as groceryItem, i}
+<div class="overflow-x-auto">
+	<table class="table table-zebra">
+		<thead>
 			<tr>
-				<td>{groceryItem.week}</td>
-				<td>
-					<input
-						name="amount"
-						type="text"
-						step="0.01"
-						min="0"
-						placeholder="0.00"
-						class="input rounded input-bordered w-full"
-						bind:value={groceryItems[i].amount}
-						oninput={(e) => {
-							const input = e.target as HTMLInputElement;
-							input.value = input.value.replace(/[^0-9.]/g, '');
-							groceryItems[i].amount = input.value ? parseFloat(input.value) : 0;
-						}}
-						onblur={() => saveGrocery(groceryItem)}
-					/>
-				</td>
-				<td>{groceryItem.month}</td>
+				{#each headItems as item}
+					<th class="px-6 py-3 text-base font-semibold">{item}</th>
+				{/each}
 			</tr>
-		{/each}
-	</tbody>
-	<tfoot>
-		<tr class="font-semibold text-base">
-			<th scope="row" class="px-6 py-3">Total</th>
-			<td class="px-6 py-3">
-				{new Intl.NumberFormat('en-US', {
-					style: 'currency',
-					currency: 'USD'
-				}).format(
-					groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0)
-				)}
-			</td>
-			<td></td>
-		</tr>
-	</tfoot>
-</table>
+		</thead>
+		<tbody>
+			{#each housing as expense, i}
+				<tr
+					class={`${expense.actualAmount > expense.estimatedAmount ? 'bg-red-100 transition-colors duration-300 dark:bg-red-700' : 'transition-colors duration-300'}`}
+				>
+					<td class="font-medium">{expense.description}</td>
+					<td>
+						<input
+							type="number"
+							step="0.01"
+							min="0"
+							class="input input-bordered w-full max-w-xs"
+							bind:value={housing[i].estimatedAmount}
+							oninput={(e) => handleNumberInput(e, i, 'estimatedAmount')}
+							onblur={() => saveInvestment(expense)}
+							placeholder="0.00"
+						/>
+					</td>
+					<td>
+						<input
+							type="number"
+							step="0.01"
+							min="0"
+							class="input input-bordered w-full max-w-xs"
+							class:input-disabled={expense.description === 'Groceries'}
+							bind:value={housing[i].actualAmount}
+							readonly={expense.description === 'Groceries'}
+							oninput={(e) => handleNumberInput(e, i, 'actualAmount')}
+							onblur={() => saveInvestment(expense)}
+							placeholder="0.00"
+						/>
+					</td>
+				</tr>
+			{/each}
+		</tbody>
+		<tfoot>
+			<tr class="font-semibold">
+				<th scope="row" class="px-6 py-3 text-base">Total</th>
+				<td class="px-6 py-3">
+					{new Intl.NumberFormat('en-US', { 
+						style: 'currency', 
+						currency: 'USD' 
+					}).format(estimatedTotal)}
+				</td>
+				<td class="px-6 py-3">
+					{new Intl.NumberFormat('en-US', { 
+						style: 'currency', 
+						currency: 'USD' 
+					}).format(actualTotal)}
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</div>

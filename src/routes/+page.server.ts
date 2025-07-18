@@ -36,18 +36,22 @@ export const actions: Actions = {
             return fail(400, { message: 'Incorrect username or password' });
         }
 
-        const validPassword = await verify(existingUser.passwordHash, password, {
-            memoryCost: 19456,
-            timeCost: 2,
-            outputLen: 32,
-            parallelism: 1
-        });
+        const validPassword = await verify(
+            existingUser.passwordHash as string,
+            password as string,
+            {
+                memoryCost: 19456,
+                timeCost: 2,
+                outputLen: 32,
+                parallelism: 1
+            }
+        );
         if (!validPassword) {
             return fail(400, { message: 'Incorrect username or password' });
         }
 
         const sessionToken = auth.generateSessionToken();
-        const session = await auth.createSession(sessionToken, existingUser.id);
+        const session = await auth.createSession(sessionToken, existingUser.id as string);
         auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
         return redirect(302, '/dashboard');
@@ -85,8 +89,8 @@ export const actions: Actions = {
             const sessionToken = auth.generateSessionToken();
             const session = await auth.createSession(sessionToken, userId);
             auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
-        } catch (e) {
-            return fail(500, { message: 'An error has occurred' });
+        } catch (error) {
+            return fail(500, { message: error instanceof Error ? error.message : 'An error has occurred' });
         }
         return redirect(302, '/dashboard');
     }

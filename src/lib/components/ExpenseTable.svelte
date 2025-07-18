@@ -9,7 +9,7 @@
 			const formData = new FormData();
 			formData.append('expense', JSON.stringify(expense));
 
-			const response = await fetch('?/update_expense', {
+			const response = await fetch('?update_expense', {
 				method: 'POST',
 				body: formData
 			});

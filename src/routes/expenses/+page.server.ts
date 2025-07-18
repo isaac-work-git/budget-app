@@ -4,23 +4,48 @@ import * as table from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
 import { and, eq } from 'drizzle-orm';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
+import type { ExpenseItem } from '$lib/types/expenseItem';
 
 const DEFAULT_EXPENSES = [
+	{ description: 'Groceries' },
+	{ description: 'Dining Out' },
+	{ description: 'Other' }
+];
+
+const DEFAULT_CAR = [
+	{ description: 'Car Payment' },
+	{ description: 'Gas' },
+	{ description: 'Car Insurance' },
+	{ description: 'Maintenance' },
+	{ description: 'Registration' },
+	{ description: 'Other' }
+];
+
+const DEFAULT_HOUSING = [
 	{ description: 'Rent/Mortgage' },
 	{ description: 'Tithing' },
 	{ description: 'Electricity Bill' },
-	{ description: 'Groceries' },
-	{ description: 'Dining Out' },
-	{ description: 'Car Payment' },
-	{ description: 'Insurance' },
-	{ description: 'Gas' },
-	{ description: '529 Plan' },
+	{ description: 'Home Insurance' },
 	{ description: 'Toiletries' },
+	{ description: 'Other' }
+];
+
+const DEFAULT_INVESTMENTS = [
+	{ description: 'Retirement Savings' },
+	{ description: 'Savings Deposit' },
+	{ description: '529 College Savings' },
+	{ description: 'Other Investments' }
+];
+
+const DEFAULT_LOANS = [
+	{ description: 'Personal Loans' },
+	{ description: 'Credit Card Payments' }
+];
+
+const DEFAULT_FUN = [
 	{ description: 'Ashtyn Fun' },
 	{ description: 'Isaac Fun' },
 	{ description: 'Wells Fun' },
-	{ description: 'Savings Deposit' },
-	{ description: 'Other' }
 ];
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -33,23 +58,40 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const { passwordHash, ...safeUser } = fullUser; // remove password
 	// Check existing expenses
 	let userExpenses = await db.select().from(table.expenses).where(eq(table.expenses.userId, locals.user.id));
+	let userInvestments = await db.select().from(table.investments).where(eq(table.investments.userId, locals.user.id));
+	let userHousing = await db.select().from(table.housing).where(eq(table.housing.userId, locals.user.id));
+	let userCar = await db.select().from(table.car).where(eq(table.car.userId, locals.user.id));
+	let userLoans = await db.select().from(table.loans).where(eq(table.loans.userId, locals.user.id));
+	let userFun = await db.select().from(table.fun).where(eq(table.fun.userId, locals.user.id));
 
     // ✅ Auto-create default expenses if user has none
-    if (userExpenses.length === 0) {
-        console.log('No expenses found. Creating default expenses...');
-        await db.insert(table.expenses).values(
-            DEFAULT_EXPENSES.map((exp) => ({
-                id: generateId(),
-                description: exp.description,
-                amount: 0,
-                actualAmount: 0,
-				userId: locals.user!.id
-            }))
-        );
+	async function ensureDefaults(
+		tableRef: typeof table.expenses | typeof table.car | typeof table.housing | typeof table.investments | typeof table.loans | typeof table.fun,
+		userId: string,
+		defaults: { description: string }[]
+	) {
+		let items = await db.select().from(tableRef).where(eq(tableRef.userId, userId));
+		if (items.length === 0) {
+			await db.insert(tableRef).values(
+				defaults.map((exp) => ({
+					id: generateId(),
+					description: exp.description,
+					amount: 0,
+					actualAmount: 0,
+					userId
+				}))
+			);
+			items = await db.select().from(tableRef).where(eq(tableRef.userId, userId));
+		}
+		return items;
+	}
 
-        // ✅ Fetch again after inserting
-        userExpenses = await db.select().from(table.expenses).where(eq(table.expenses.userId, locals.user.id));
-    }
+	userExpenses = await ensureDefaults(table.expenses, locals.user.id as string, DEFAULT_EXPENSES);
+	userCar = await ensureDefaults(table.car, locals.user.id as string, DEFAULT_CAR);
+	userHousing = await ensureDefaults(table.housing, locals.user.id as string, DEFAULT_HOUSING);
+	userInvestments = await ensureDefaults(table.investments, locals.user.id as string, DEFAULT_INVESTMENTS);
+	userLoans = await ensureDefaults(table.loans, locals.user.id as string, DEFAULT_LOANS);
+	userFun = await ensureDefaults(table.fun, locals.user.id as string, DEFAULT_FUN);
 
     // Fetch existing groceries
     let groceryItems = await db
@@ -80,6 +122,11 @@ export const load: PageServerLoad = async ({ locals }) => {
     return {
         user: safeUser,
         expenses: userExpenses,
+		investments: userInvestments,
+		housing: userHousing,
+		car: userCar,
+		loans: userLoans,
+		fun: userFun,
         groceryItems
     };
 };
@@ -98,10 +145,10 @@ add_expense: async (event) => {
 			await db.delete(table.expenses).where(eq(table.expenses.userId, event.locals.user.id));
 
 			await db.insert(table.expenses).values(
-				expenses.map((item: any) => ({
+				expenses.map((item: ExpenseItem) => ({
 					id: generateId(),
 					description: item.description,
-					amount: parseFloat(item.amount),
+					amount: item.estimatedAmount,
 					userId: event.locals.user!.id
 				}))
 			);
@@ -153,6 +200,81 @@ add_expense: async (event) => {
 			return fail(500, { message: 'Internal Server Error' });
 		}
 
+		return { success: true };
+	},
+
+	update_investment: async ({ request, locals }) => {
+		if (!locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		const formData = await request.formData();
+		const rawInvestment = formData.get('investment');
+
+		if (typeof rawInvestment !== 'string') {
+			return fail(400, { message: 'Invalid data' });
+		}
+
+		try {
+			const investment = JSON.parse(rawInvestment);
+
+			if (!investment.description) {
+				return fail(400, { message: 'Missing investment description' });
+			}
+
+			await db.update(table.investments)
+				.set({
+					amount: investment.estimatedAmount,
+					actualAmount: investment.actualAmount
+				})
+				.where(
+					and(
+						eq(table.investments.userId, locals.user.id),
+						eq(table.investments.description, String(investment.description))
+					)
+				);
+		} catch (err) {
+			console.error('Failed to update investment', err);
+			return fail(500, { message: 'Internal Server Error' });
+		}
+
+		return { success: true };
+	},
+
+	update_housing: async ({ request, locals }) => {
+		if (!locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		const formData = await request.formData();
+		const rawHousing = formData.get('housing');
+
+		if (typeof rawHousing !== 'string') {
+			return fail(400, { message: 'Invalid data' });
+		}
+
+		try {
+			const housing = JSON.parse(rawHousing);
+
+			if (!housing.description) {
+				return fail(400, { message: 'Missing housing description' });
+			}
+
+			await db.update(table.housing)
+				.set({
+					amount: housing.estimatedAmount,
+					actualAmount: housing.actualAmount
+				})
+				.where(
+					and(
+						eq(table.housing.userId, locals.user.id),
+						eq(table.housing.description, String(housing.description))
+					)
+				);
+		} catch (err) {
+			console.error('Failed to update housing', err);
+			return fail(500, { message: 'Internal Server Error' });
+		}
 		return { success: true };
 	},
 

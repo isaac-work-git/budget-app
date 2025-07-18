@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const [fullUser] = await db.select().from(table.user).where(eq(table.user.id, locals.user.id));
 	const { passwordHash, ...safeUser } = fullUser; // remove password
 	// Check existing expenses
-	let userExpenses = await db.select().from(table.expenses).where(eq(table.expenses.userId, locals.user.id));
+	const userExpenses = await db.select().from(table.expenses).where(eq(table.expenses.userId, locals.user.id));
 
 	return {
 		user: safeUser,
@@ -38,9 +38,8 @@ export const actions: Actions = {
 				.set({ income: parsedIncome })
 				.where(eq(table.user.id, event.locals.user.id));
 		} catch (error) {
-			return fail(500, { message: 'An error has occurred' });
-		}
-
+            return fail(500, { message: error instanceof Error ? error.message : 'An error has occurred' });
+        }
 		return {
 			success: true
 		};
