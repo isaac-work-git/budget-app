@@ -91,46 +91,46 @@ let funItems = $state(
 <div>
 	<NavBar name={data?.user?.displayName ?? 'User'} />
 	<!-- Mobile View -->
-	<section id="mobile-column" class="flex flex-col md:hidden">
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+	<section id="mobile-column" class="grid grid-cols-1 md:hidden">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-4">Grocery Tracker</h1>
-			<div class="collapse-content p-4">
+			<h1 class="collapse-title text-2xl font-bold p-2">Grocery Tracker</h1>
+			<div class="collapse-content p-2">
 				<GroceryRow bind:groceryItems bind:total={groceryTotal} />
 			</div>
 		</div>
-		<div class="collapse collapse-arrowshadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+		<div class="collapse collapse-arrowshadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-4">Investments</h1>
-			<div class="collapse-content p-4">
+			<h1 class="collapse-title text-2xl font-bold p-2">Investments</h1>
+			<div class="collapse-content p-2">
 				<InvestmentsTable bind:investments />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-4">Housing Expenses</h1>
-			<div class="collapse-content p-4">
+			<h1 class="collapse-title text-2xl font-bold p-2">Housing Expenses</h1>
+			<div class="collapse-content p-2">
 				<AptTable bind:housing />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-4">Car Expenses</h1>
-			<div class="collapse-content p-4">
+			<h1 class="collapse-title text-2xl font-bold p-2">Car Expenses</h1>
+			<div class="collapse-content p-2">
 				<CarTable bind:car />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-4">Loans</h1>
-			<div class="collapse-content p-4">
+			<h1 class="collapse-title text-2xl font-bold p-2">Loans</h1>
+			<div class="collapse-content p-2">
 				<LoanTable bind:loans />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-4">Fun Money</h1>
-			<div class="collapse-content p-4">
+			<h1 class="collapse-title text-2xl font-bold p-2">Fun Money</h1>
+			<div class="collapse-content p-2">
 				<FunTable bind:funItems />
 			</div>
 		</div>
@@ -176,12 +176,12 @@ let funItems = $state(
 		</div>
 	</section>
 
-    <section id="expenses" class="mx-5 mb-25 md:mx-10">
-        <card shadow="xl" class="max-w-screen">
-            <div class="flex flex-col gap-4 md:p-4">
-                <h1 class="dark:text-white">Total Expenses</h1>
+    <section id="expenses" class="mb-25">
+        <div class="card card-md shadow-xl bg-neutral text-neutral-content m-5 md:m-10">
+            <div class="card-body">
+                <h1 class="card-title text-2xl font-bold p-4">Total Expenses</h1>
                 <ExpenseTable bind:items />
             </div>
-        </card>
+        </div>
     </section>
 </div>
