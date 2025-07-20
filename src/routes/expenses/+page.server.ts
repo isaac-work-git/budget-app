@@ -132,7 +132,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-add_expense: async (event) => {
+	add_expense: async (event) => {
 		const formData = await event.request.formData();
 		const rawExpenses = formData.get('expenses') as string;
 
@@ -273,6 +273,117 @@ add_expense: async (event) => {
 				);
 		} catch (err) {
 			console.error('Failed to update housing', err);
+			return fail(500, { message: 'Internal Server Error' });
+		}
+		return { success: true };
+	},
+
+	update_loan: async ({ request, locals }) => {
+		if (!locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		const formData = await request.formData();
+		const rawLoan = formData.get('loan');
+
+		if (typeof rawLoan !== 'string') {
+			return fail(400, { message: 'Invalid data' });
+		}
+
+		try {
+			const loan = JSON.parse(rawLoan);
+
+			if (!loan.description) {
+				return fail(400, { message: 'Missing loan description' });
+			}
+
+			await db.update(table.loans)
+				.set({
+					amount: loan.estimatedAmount,
+					actualAmount: loan.actualAmount
+				})
+				.where(
+					and(
+						eq(table.loans.userId, locals.user.id),
+						eq(table.loans.description, String(loan.description))
+					)
+				);
+		} catch (err) {
+			console.error('Failed to update loan', err);
+			return fail(500, { message: 'Internal Server Error' });
+		}
+		return { success: true };
+	},
+
+	update_fun: async ({ request, locals }) => {
+		if (!locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		const formData = await request.formData();
+		const rawFun = formData.get('fun');
+
+		if (typeof rawFun !== 'string') {
+			return fail(400, { message: 'Invalid data' });
+		}
+
+		try {
+			const fun = JSON.parse(rawFun);
+
+			if (!fun.description) {
+				return fail(400, { message: 'Missing fun description' });
+			}
+
+			await db.update(table.fun)
+				.set({
+					amount: fun.estimatedAmount,
+					actualAmount: fun.actualAmount
+				})
+				.where(
+					and(
+						eq(table.fun.userId, locals.user.id),
+						eq(table.fun.description, String(fun.description))
+					)
+				);
+		} catch (err) {
+			console.error('Failed to update fun', err);
+			return fail(500, { message: 'Internal Server Error' });
+		}
+		return { success: true };
+	},
+
+	update_car: async ({ request, locals }) => {
+		if (!locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		const formData = await request.formData();
+		const rawCar = formData.get('car');
+
+		if (typeof rawCar !== 'string') {
+			return fail(400, { message: 'Invalid data' });
+		}
+
+		try {
+			const car = JSON.parse(rawCar);
+
+			if (!car.description) {
+				return fail(400, { message: 'Missing car description' });
+			}
+
+			await db.update(table.car)
+				.set({
+					amount: car.estimatedAmount,
+					actualAmount: car.actualAmount
+				})
+				.where(
+					and(
+						eq(table.car.userId, locals.user.id),
+						eq(table.car.description, String(car.description))
+					)
+				);
+		} catch (err) {
+			console.error('Failed to update car', err);
 			return fail(500, { message: 'Internal Server Error' });
 		}
 		return { success: true };

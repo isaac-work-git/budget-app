@@ -1,24 +1,23 @@
-<!-- ExpenseTable.svelte -->
 <script lang="ts">
-	let { car = $bindable() } = $props();
+	let { car = $bindable(), carTotal = $bindable() } = $props();
 
 	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
-	async function saveInvestment(car: any) {
+	async function saveCar(carItem: any) {
 		try {
 			const formData = new FormData();
-			formData.append('investment', JSON.stringify(car));
+			formData.append('carItem', JSON.stringify(carItem));
 
-			const response = await fetch('?update_car', {
+			const response = await fetch(`${window.location.pathname}?/update_car`, {
 				method: 'POST',
 				body: formData
 			});
 
 			if (!response.ok) {
-				console.error('Failed to save car item');
+				console.error('Failed to save carItem item');
 			}
 		} catch (error) {
-			console.error('Error saving car item', error);
+			console.error('Error saving carItem item', error);
 		}
 	}
 
@@ -46,11 +45,11 @@
 </script>
 
 <div class="overflow-x-auto">
-	<table class="table table-zebra">
+	<table class="table">
 		<thead>
 			<tr>
 				{#each headItems as item}
-					<th class="px-6 py-3 text-base font-semibold">{item}</th>
+					<th class="py-3 text-lg text-secondary font-semibold">{item}</th>
 				{/each}
 			</tr>
 		</thead>
@@ -65,10 +64,10 @@
 							type="number"
 							step="0.01"
 							min="0"
-							class="input input-bordered w-full max-w-xs"
+							class="input input-bordered w-full max-w-xs text-secondary"
 							bind:value={car[i].estimatedAmount}
 							oninput={(e) => handleNumberInput(e, i, 'estimatedAmount')}
-							onblur={() => saveInvestment(autoExpense)}
+							onblur={() => saveCar(autoExpense)}
 							placeholder="0.00"
 						/>
 					</td>
@@ -77,12 +76,10 @@
 							type="number"
 							step="0.01"
 							min="0"
-							class="input input-bordered w-full max-w-xs"
-							class:input-disabled={autoExpense.description === 'Groceries'}
+							class="input input-bordered w-full max-w-xs text-secondary"
 							bind:value={car[i].actualAmount}
-							readonly={autoExpense.description === 'Groceries'}
 							oninput={(e) => handleNumberInput(e, i, 'actualAmount')}
-							onblur={() => saveInvestment(autoExpense)}
+							onblur={() => saveCar(autoExpense)}
 							placeholder="0.00"
 						/>
 					</td>
@@ -90,8 +87,8 @@
 			{/each}
 		</tbody>
 		<tfoot>
-			<tr class="font-semibold">
-				<th scope="row" class="px-6 py-3 text-base">Total</th>
+			<tr class="font-semibold text-secondary text-lg">
+				<th scope="row" class="py-3">Total</th>
 				<td class="px-6 py-3">
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 

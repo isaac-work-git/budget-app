@@ -22,7 +22,7 @@
 			</div>
 		</div>
 		<ul
-			class="menu menu-sm dropdown-content text-primary-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+			class="menu menu-sm dropdown-content text-primary bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
 			<li>{name}</li>
 			<li>
 				<form method="POST" action="/logout">

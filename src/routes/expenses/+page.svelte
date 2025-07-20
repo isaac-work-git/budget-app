@@ -7,6 +7,8 @@
 	import InvestmentsTable from "$lib/components/tables/InvestmentsTable.svelte";
 	import AptTable from "$lib/components/tables/AptTable.svelte";
 	import CarTable from "$lib/components/tables/CarTable.svelte";
+	import LoanTable from "$lib/components/tables/LoanTable.svelte";
+	import FunTable from "$lib/components/tables/FunTable.svelte";
 
 	interface Props {
 		data: PageServerData;
@@ -50,6 +52,14 @@
 
 	let car = $state(
 		(data?.car ?? []).map((item: any) => ({
+			description: item.description,
+			estimatedAmount: item.amount ?? 0, // original "amount" becomes "estimated"
+			actualAmount: item.actualAmount ?? 0 // new actualAmount starts at 0
+		}))
+	);
+
+let funItems = $state(
+		(data?.fun ?? []).map((item: any) => ({
 			description: item.description,
 			estimatedAmount: item.amount ?? 0, // original "amount" becomes "estimated"
 			actualAmount: item.actualAmount ?? 0 // new actualAmount starts at 0
@@ -110,6 +120,20 @@
 				<CarTable bind:car />
 			</div>
 		</div>
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+			<input type="checkbox" />
+			<h1 class="collapse-title text-2xl font-bold p-4">Loans</h1>
+			<div class="collapse-content p-4">
+				<LoanTable bind:loans />
+			</div>
+		</div>
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content md:w-1/2 m-10">
+			<input type="checkbox" />
+			<h1 class="collapse-title text-2xl font-bold p-4">Fun Money</h1>
+			<div class="collapse-content p-4">
+				<FunTable bind:funItems />
+			</div>
+		</div>
 	</section>
 
 	<!-- Desktop View -->
@@ -136,6 +160,18 @@
 			<div class="card-body">
 				<h1 class="card-title text-2xl font-bold p-4">Car Expenses</h1>
 				<CarTable bind:car />
+			</div>
+		</div>
+		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
+			<div class="card-body">
+				<h1 class="card-title text-2xl font-bold p-4">Loans</h1>
+				<LoanTable bind:loans />
+			</div>
+		</div>
+		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
+			<div class="card-body">
+				<h1 class="card-title text-2xl font-bold p-4">Fun Money</h1>
+				<FunTable bind:funItems />
 			</div>
 		</div>
 	</section>

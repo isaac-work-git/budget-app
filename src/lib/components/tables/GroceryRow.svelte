@@ -48,11 +48,11 @@
 	const headItems = ['Week', 'Amount', 'Month'];
 </script>
 
-<table class="table table-zebra w-full">
+<table class="table w-full">
 	<thead>
 		<tr>
 			{#each headItems as item}
-				<th class="px-6 py-3 text-base font-semibold">{item}</th>
+				<th class="py-3 text-lg text-secondary font-semibold">{item}</th>
 			{/each}
 		</tr>
 	</thead>
@@ -67,7 +67,7 @@
 						step="0.01"
 						min="0"
 						placeholder="0.00"
-						class="input rounded input-bordered w-full"
+						class="input input-bordered w-full max-w-xs text-secondary"
 						bind:value={groceryItems[i].amount}
 						oninput={(e) => {
 							const input = e.target as HTMLInputElement;
@@ -82,8 +82,8 @@
 		{/each}
 	</tbody>
 	<tfoot>
-		<tr class="font-semibold text-base">
-			<th scope="row" class="px-6 py-3">Total</th>
+		<tr class="font-semibold text-secondary text-lg">
+			<th scope="row" class="py-3">Total</th>
 			<td class="px-6 py-3">
 				{new Intl.NumberFormat('en-US', {
 					style: 'currency',

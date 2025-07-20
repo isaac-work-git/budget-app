@@ -9,7 +9,7 @@
 			const formData = new FormData();
 			formData.append('investment', JSON.stringify(investment));
 
-			const response = await fetch('?update_investment', {
+			const response = await fetch(`${window.location.pathname}?/update_investment`, {
 				method: 'POST',
 				body: formData
 			});
@@ -46,11 +46,11 @@
 </script>
 
 <div class="overflow-x-auto">
-	<table class="table table-zebra">
+	<table class="table">
 		<thead>
 			<tr>
 				{#each headItems as item}
-					<th class="px-6 py-3 text-base font-semibold">{item}</th>
+					<th class="py-3 text-lg text-secondary font-semibold">{item}</th>
 				{/each}
 			</tr>
 		</thead>
@@ -65,7 +65,7 @@
 							type="number"
 							step="0.01"
 							min="0"
-							class="input input-bordered w-full max-w-xs"
+							class="input input-bordered w-full max-w-xs text-secondary"
 							bind:value={investments[i].estimatedAmount}
 							oninput={(e) => handleNumberInput(e, i, 'estimatedAmount')}
 							onblur={() => saveInvestment(expense)}
@@ -77,10 +77,8 @@
 							type="number"
 							step="0.01"
 							min="0"
-							class="input input-bordered w-full max-w-xs"
-							class:input-disabled={expense.description === 'Groceries'}
+							class="input input-bordered w-full max-w-xs text-secondary"
 							bind:value={investments[i].actualAmount}
-							readonly={expense.description === 'Groceries'}
 							oninput={(e) => handleNumberInput(e, i, 'actualAmount')}
 							onblur={() => saveInvestment(expense)}
 							placeholder="0.00"
@@ -90,8 +88,8 @@
 			{/each}
 		</tbody>
 		<tfoot>
-			<tr class="font-semibold">
-				<th scope="row" class="px-6 py-3 text-base">Total</th>
+			<tr class="font-semibold text-secondary text-lg">
+				<th scope="row" class="py-3">Total</th>
 				<td class="px-6 py-3">
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 
