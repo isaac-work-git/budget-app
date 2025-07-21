@@ -4,11 +4,14 @@ import * as table from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
 import { and, eq } from 'drizzle-orm';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
-import type { ExpenseItem } from '$lib/types/expenseItem';
 
 const DEFAULT_EXPENSES = [
 	{ description: 'Groceries' },
-	{ description: 'Dining Out' },
+	{ description: 'Car' },
+	{ description: 'Housing' },
+	{ description: 'Investments' },
+	{ description: 'Loans' },
+	{ description: 'Fun' },
 	{ description: 'Other' }
 ];
 
@@ -43,6 +46,9 @@ const DEFAULT_LOANS = [
 ];
 
 const DEFAULT_FUN = [
+	{ description: 'Dining Out' },
+	{ description: 'Entertainment' },
+	{ description: 'Subscriptions' },
 	{ description: 'Ashtyn Fun' },
 	{ description: 'Isaac Fun' },
 	{ description: 'Wells Fun' },
@@ -132,36 +138,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-	add_expense: async (event) => {
-		const formData = await event.request.formData();
-		const rawExpenses = formData.get('expenses') as string;
-
-		if (!event.locals.user) {
-			return fail(401, { message: 'Unauthorized' });
-		}
-
-		try {
-			const expenses = JSON.parse(rawExpenses);
-			await db.delete(table.expenses).where(eq(table.expenses.userId, event.locals.user.id));
-
-			await db.insert(table.expenses).values(
-				expenses.map((item: ExpenseItem) => ({
-					id: generateId(),
-					description: item.description,
-					amount: item.estimatedAmount,
-					userId: event.locals.user!.id
-				}))
-			);
-		} catch (error) {
-			console.error(error);
-			return fail(500, { message: 'An error has occurred' });
-		}
-
-		return {
-			success: true
-		};
-	},
-
 	update_expense: async ({ request, locals }) => {
 		if (!locals.user) {
 			return fail(401, { message: 'Unauthorized' });

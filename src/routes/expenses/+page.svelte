@@ -17,54 +17,20 @@
 
 	let { data }: Props = $props();
 
-	// Add null safety checks and proper typing
-	let items = $state(
-		(data?.expenses ?? []).map((item: any) => ({
+	function mapBudgetItems(items: any[] = []) {
+		return items.map((item) => ({
 			description: item.description,
-			estimatedAmount: item.amount ?? 0, // original "amount" becomes "estimated"
-			actualAmount: item.actualAmount ?? 0 // new actualAmount starts at 0
-		}))
-	);
+			estimatedAmount: item.amount ?? 0,
+			actualAmount: item.actualAmount ?? 0
+		}));
+	}
 
-	let investments = $state(
-		(data?.investments ?? []).map((item: any) => ({
-			description: item.description,
-			estimatedAmount: item.amount ?? 0, // original "amount" becomes "estimated"
-			actualAmount: item.actualAmount ?? 0 // new actualAmount starts at 0
-		}))
-	);
-
-	let loans = $state(
-		(data?.loans ?? []).map((item: any) => ({
-			description: item.description,
-			estimatedAmount: item.amount ?? 0, // original "amount" becomes "estimated"
-			actualAmount: item.actualAmount ?? 0 // new actualAmount starts at 0
-		}))
-	);
-
-	let housing = $state(
-		(data?.housing ?? []).map((item: any) => ({
-			description: item.description,
-			estimatedAmount: item.amount ?? 0, // original "amount" becomes "estimated"
-			actualAmount: item.actualAmount ?? 0 // new actualAmount starts at 0
-		}))
-	);
-
-	let car = $state(
-		(data?.car ?? []).map((item: any) => ({
-			description: item.description,
-			estimatedAmount: item.amount ?? 0, // original "amount" becomes "estimated"
-			actualAmount: item.actualAmount ?? 0 // new actualAmount starts at 0
-		}))
-	);
-
-let funItems = $state(
-		(data?.fun ?? []).map((item: any) => ({
-			description: item.description,
-			estimatedAmount: item.amount ?? 0, // original "amount" becomes "estimated"
-			actualAmount: item.actualAmount ?? 0 // new actualAmount starts at 0
-		}))
-	);
+	let items = $state(mapBudgetItems(data?.expenses));
+	let investments = $state(mapBudgetItems(data?.investments));
+	let loans = $state(mapBudgetItems(data?.loans));
+	let housing = $state(mapBudgetItems(data?.housing));
+	let car = $state(mapBudgetItems(data?.car));
+	let funItems = $state(mapBudgetItems(data?.fun));
 
 	let groceryItems = $state(
 		(data?.groceryItems ?? []).map((item: any) => {
@@ -79,11 +45,18 @@ let funItems = $state(
 	);
 
 	let groceryTotal = $state(0);
+	let actCarTotal = $state(0);
+	let estCarTotal = $state(0);
 
 	$effect(() => {
 		const groceriesRow = items.find((item: { description: string; }) => item.description === 'Groceries');
 		if (groceriesRow) {
 			groceriesRow.actualAmount = groceryTotal;
+		}
+		const carRow = items.find((item: { description: string; }) => item.description === 'Car');
+		if (carRow) {
+			carRow.actualAmount = actCarTotal;
+			carRow.estimatedAmount = estCarTotal;
 		}
 	});
 </script>
@@ -94,9 +67,9 @@ let funItems = $state(
 	<section id="mobile-column" class="grid grid-cols-1 md:hidden">
 		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-2">Grocery Tracker</h1>
+			<h1 class="collapse-title text-2xl font-bold p-2">Loans</h1>
 			<div class="collapse-content p-2">
-				<GroceryRow bind:groceryItems bind:total={groceryTotal} />
+				<LoanTable bind:loans />
 			</div>
 		</div>
 		<div class="collapse collapse-arrowshadow-xl bg-neutral text-neutral-content m-5">
@@ -117,14 +90,14 @@ let funItems = $state(
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2">Car Expenses</h1>
 			<div class="collapse-content p-2">
-				<CarTable bind:car />
+				<CarTable bind:car bind:actCarTotal bind:estCarTotal />
 			</div>
 		</div>
 		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-2">Loans</h1>
+			<h1 class="collapse-title text-2xl font-bold p-2">Grocery Tracker</h1>
 			<div class="collapse-content p-2">
-				<LoanTable bind:loans />
+				<GroceryRow bind:groceryItems bind:total={groceryTotal} />
 			</div>
 		</div>
 		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
@@ -140,8 +113,8 @@ let funItems = $state(
 	<section id="desktop-view" class="hidden md:grid md:grid-cols-2">
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
 			<div class="card-body">
-				<h1 class="card-title text-2xl font-bold p-4">Grocery Tracker</h1>
-				<GroceryRow bind:groceryItems bind:total={groceryTotal} />
+				<h1 class="card-title text-2xl font-bold p-4">Loans</h1>
+				<LoanTable bind:loans />
 			</div>
 		</div>
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
@@ -159,13 +132,13 @@ let funItems = $state(
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
 			<div class="card-body">
 				<h1 class="card-title text-2xl font-bold p-4">Car Expenses</h1>
-				<CarTable bind:car />
+				<CarTable bind:car bind:actCarTotal bind:estCarTotal />
 			</div>
 		</div>
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
 			<div class="card-body">
-				<h1 class="card-title text-2xl font-bold p-4">Loans</h1>
-				<LoanTable bind:loans />
+				<h1 class="card-title text-2xl font-bold p-4">Grocery Tracker</h1>
+				<GroceryRow bind:groceryItems bind:total={groceryTotal} />
 			</div>
 		</div>
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">

@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { car = $bindable(), carTotal = $bindable() } = $props();
+	let { car = $bindable(), estCarTotal = $bindable(), actCarTotal = $bindable() } = $props();
 
 	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
@@ -35,13 +35,17 @@
 		car[index][field] = cleanValue ? parseFloat(cleanValue) : 0;
 	}
 
-	// Calculate totals using $derived for Svelte 5 runes mode
 	const estimatedTotal = $derived(
 		car.reduce((sum: number, item: any) => sum + (Number(item.estimatedAmount) || 0), 0)
 	);
 	const actualTotal = $derived(
 		car.reduce((sum: number, item: any) => sum + (Number(item.actualAmount) || 0), 0)
 	);
+
+	$effect(() => {
+		estCarTotal = estimatedTotal;
+		actCarTotal = actualTotal;
+	});
 </script>
 
 <div class="overflow-x-auto">
