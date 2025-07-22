@@ -177,10 +177,10 @@
 		</div>
 	</section>
 
-    <section id="expenses" class="mb-25">
-        <div class="card card-md shadow-xl bg-neutral text-neutral-content m-5 md:m-10">
+    <section id="expenses" class="mb-10 md:mb-25">
+        <div class="card card-sm md:card-md shadow-xl bg-neutral text-neutral-content m-3 md:m-10">
             <div class="card-body">
-                <h1 class="card-title text-2xl font-bold p-4">Total Expenses</h1>
+                <h1 class="card-title text-2xl font-bold p-2">Total Expenses</h1>
                 <ExpenseTable bind:items />
             </div>
         </div>
