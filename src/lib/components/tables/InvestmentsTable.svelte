@@ -6,7 +6,7 @@
 	}
 	let { investments = $bindable(), actInvestTotal = $bindable(), estInvestTotal = $bindable() }: Props = $props();
 
-	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
+	const headItems = ['Description', 'Est. Amount', 'Actual'];
 
 	async function saveInvestment(investment: any) {
 		try {
@@ -47,7 +47,7 @@
 </script>
 
 <div class="overflow-x-auto">
-	<table class="table">
+	<table class="table table-xs md:table-md">
 		<thead>
 			<tr>
 				{#each headItems as item}

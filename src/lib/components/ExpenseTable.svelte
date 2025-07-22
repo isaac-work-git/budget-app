@@ -2,7 +2,7 @@
 <script lang="ts">
 	let { items = $bindable() } = $props();
 
-	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
+	const headItems = ['Description', 'Est. Amount', 'Actual'];
 
 	async function saveExpense(expense: any) {
 		try {

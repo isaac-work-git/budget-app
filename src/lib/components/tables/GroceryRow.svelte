@@ -48,7 +48,7 @@
 	const headItems = ['Week', 'Amount', 'Month'];
 </script>
 
-<table class="table w-full">
+<table class="table w-full table-xs md:table-md">
 	<thead>
 		<tr>
 			{#each headItems as item}
