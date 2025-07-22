@@ -47,6 +47,14 @@
 	let groceryTotal = $state(0);
 	let actCarTotal = $state(0);
 	let estCarTotal = $state(0);
+	let actFunTotal = $state(0);
+	let estFunTotal = $state(0);
+	let actHousingTotal = $state(0);
+	let estHousingTotal = $state(0);
+	let actInvestTotal = $state(0);
+	let estInvestTotal = $state(0);
+	let actLoanTotal = $state(0);
+	let estLoanTotal = $state(0);
 
 	$effect(() => {
 		const groceriesRow = items.find((item: { description: string; }) => item.description === 'Groceries');
@@ -57,6 +65,26 @@
 		if (carRow) {
 			carRow.actualAmount = actCarTotal;
 			carRow.estimatedAmount = estCarTotal;
+		}
+		const funRow = items.find((item: { description: string; }) => item.description === 'Fun');
+		if (funRow) {
+			funRow.actualAmount = actFunTotal;
+			funRow.estimatedAmount = estFunTotal;
+		}
+		const housingRow = items.find((item: { description: string; }) => item.description === 'Housing');
+		if (housingRow) {
+			housingRow.actualAmount = actHousingTotal;
+			housingRow.estimatedAmount = estHousingTotal;
+		}
+		const investmentsRow = items.find((item: { description: string; }) => item.description === 'Investments');
+		if (investmentsRow) {
+			investmentsRow.actualAmount = actInvestTotal;
+			investmentsRow.estimatedAmount = estInvestTotal;
+		}
+		const loansRow = items.find((item: { description: string; }) => item.description === 'Loans');
+		if (loansRow) {
+			loansRow.actualAmount = actLoanTotal;
+			loansRow.estimatedAmount = estLoanTotal;
 		}
 	});
 </script>
@@ -69,21 +97,21 @@
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2">Loans</h1>
 			<div class="collapse-content p-2">
-				<LoanTable bind:loans />
+				<LoanTable bind:loans bind:actLoanTotal bind:estLoanTotal />
 			</div>
 		</div>
 		<div class="collapse collapse-arrowshadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2">Investments</h1>
 			<div class="collapse-content p-2">
-				<InvestmentsTable bind:investments />
+				<InvestmentsTable bind:investments bind:actInvestTotal bind:estInvestTotal />
 			</div>
 		</div>
 		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2">Housing Expenses</h1>
 			<div class="collapse-content p-2">
-				<AptTable bind:housing />
+				<AptTable bind:housing bind:actHousingTotal bind:estHousingTotal />
 			</div>
 		</div>
 		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
@@ -104,7 +132,7 @@
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2">Fun Money</h1>
 			<div class="collapse-content p-2">
-				<FunTable bind:funItems />
+				<FunTable bind:funItems bind:actFunTotal bind:estFunTotal />
 			</div>
 		</div>
 	</section>
@@ -114,19 +142,19 @@
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
 			<div class="card-body">
 				<h1 class="card-title text-2xl font-bold p-4">Loans</h1>
-				<LoanTable bind:loans />
+				<LoanTable bind:loans bind:actLoanTotal bind:estLoanTotal />
 			</div>
 		</div>
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
 			<div class="card-body">
 				<h1 class="card-title text-2xl font-bold p-4">Investments</h1>
-				<InvestmentsTable bind:investments />
+				<InvestmentsTable bind:investments bind:actInvestTotal bind:estInvestTotal />
 			</div>
 		</div>
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
 			<div class="card-body">
 				<h1 class="card-title text-2xl font-bold p-4">Housing Expenses</h1>
-				<AptTable bind:housing />
+				<AptTable bind:housing bind:actHousingTotal bind:estHousingTotal />
 			</div>
 		</div>
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
@@ -144,7 +172,7 @@
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
 			<div class="card-body">
 				<h1 class="card-title text-2xl font-bold p-4">Fun Money</h1>
-				<FunTable bind:funItems />
+				<FunTable bind:funItems bind:actFunTotal bind:estFunTotal />
 			</div>
 		</div>
 	</section>

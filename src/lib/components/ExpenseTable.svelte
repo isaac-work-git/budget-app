@@ -4,6 +4,41 @@
 
 	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
+	async function saveExpense(expense: any) {
+		try {
+			const formData = new FormData();
+			formData.append('expense', JSON.stringify(expense));
+
+			const response = await fetch(`${window.location.pathname}?/update_expense`, {
+				method: 'POST',
+				body: formData
+			});
+
+			if (!response.ok) {
+				console.error('Failed to save expense item');
+			}
+		} catch (error) {
+			console.error('Error saving expense item', error);
+		}
+	}
+
+	let previousItems = items.map((item: any) => ({ ...item }));
+
+	$effect(() => {
+		items.forEach((expense: { estimatedAmount: any; actualAmount: any; }, i: string | number) => {
+			const prev = previousItems[i];
+			if (
+				expense.estimatedAmount !== prev?.estimatedAmount ||
+				expense.actualAmount !== prev?.actualAmount
+			) {
+				saveExpense(expense);
+			}
+		});
+
+		previousItems = items.map((item: any) => ({ ...item }));
+	});
+
+
 	// Calculate totals using $derived for Svelte 5 runes mode
 	const estimatedTotal = $derived(
 		items.reduce((sum: number, item: any) => sum + (Number(item.estimatedAmount) || 0), 0)

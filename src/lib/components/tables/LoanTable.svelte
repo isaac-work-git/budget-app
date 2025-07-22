@@ -1,6 +1,10 @@
-<!-- ExpenseTable.svelte -->
 <script lang="ts">
-	let { loans = $bindable() } = $props();
+	interface Props {
+		loans: any[];
+		actLoanTotal: number;
+		estLoanTotal: number;
+	}
+	let { loans = $bindable(), actLoanTotal = $bindable(), estLoanTotal = $bindable() }: Props = $props();
 
 	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
@@ -36,13 +40,10 @@
 		loans[index][field] = cleanValue ? parseFloat(cleanValue) : 0;
 	}
 
-	// Calculate totals using $derived for Svelte 5 runes mode
-	const estimatedTotal = $derived(
-		loans.reduce((sum: number, item: any) => sum + (Number(item.estimatedAmount) || 0), 0)
-	);
-	const actualTotal = $derived(
-		loans.reduce((sum: number, item: any) => sum + (Number(item.actualAmount) || 0), 0)
-	);
+	$effect(() => {
+		actLoanTotal = loans.reduce((sum, item) => sum + (item.actualAmount ?? 0), 0);
+		estLoanTotal = loans.reduce((sum, item) => sum + (item.estimatedAmount ?? 0), 0);
+	});
 </script>
 
 <div class="overflow-x-auto">
@@ -94,13 +95,13 @@
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 
 						currency: 'USD' 
-					}).format(estimatedTotal)}
+					}).format(estLoanTotal)}
 				</td>
 				<td class="px-6 py-3">
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 
 						currency: 'USD' 
-					}).format(actualTotal)}
+					}).format(actLoanTotal)}
 				</td>
 			</tr>
 		</tfoot>

@@ -1,4 +1,3 @@
-<!-- SankeyChart.svelte -->
 <script lang="ts">
     import { onMount, onDestroy } from 'svelte';
     import type { ExpenseItem } from '$lib/types/expenseItem';
@@ -110,9 +109,9 @@
         Plotly.newPlot(chartDiv, plotData, {
             title: {
                 text: "Income → Expenses Flow",
-                font: { size: 16 }
+                font: { size: 18 }
             },
-            font: { size: 12 },
+            font: { size: 14 },
             margin: { t: 50, l: 50, r: 50, b: 50 },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)'
@@ -136,10 +135,10 @@
     });
 </script>
 
-<div bind:this={chartDiv} class="w-full h-[500px] bg-base-100 rounded-lg shadow-sm"></div>
+<div bind:this={chartDiv} class="w-full h-full bg-base-100 rounded-lg shadow-lg"></div>
 
 {#if !plotlyLoaded}
-    <div class="w-full h-[500px] flex items-center justify-center bg-base-100 rounded-lg shadow-sm">
+    <div class="w-full h-full flex items-center justify-center bg-base-100 rounded-lg shadow-lg">
         <div class="loading loading-spinner loading-lg"></div>
         <span class="ml-2">Loading chart...</span>
     </div>

@@ -1,13 +1,19 @@
 <!-- ExpenseTable.svelte -->
 <script lang="ts">
-	let { housing = $bindable() } = $props();
+	interface Props {
+		housing: any[];
+		actHousingTotal: number;
+		estHousingTotal: number;
+	}
+
+	let { housing = $bindable(), actHousingTotal = $bindable(), estHousingTotal = $bindable() }: Props = $props();
 
 	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
-	async function saveInvestment(housing: any) {
+	async function saveHousing(housing: any) {
 		try {
 			const formData = new FormData();
-			formData.append('investment', JSON.stringify(housing));
+			formData.append('housing', JSON.stringify(housing));
 
 			const response = await fetch(`${window.location.pathname}?/update_housing`, {
 				method: 'POST',
@@ -36,13 +42,10 @@
 		housing[index][field] = cleanValue ? parseFloat(cleanValue) : 0;
 	}
 
-	// Calculate totals using $derived for Svelte 5 runes mode
-	const estimatedTotal = $derived(
-		housing.reduce((sum: number, item: any) => sum + (Number(item.estimatedAmount) || 0), 0)
-	);
-	const actualTotal = $derived(
-		housing.reduce((sum: number, item: any) => sum + (Number(item.actualAmount) || 0), 0)
-	);
+	$effect(() => {
+		actHousingTotal = housing.reduce((sum, item) => sum + (item.actualAmount ?? 0), 0);
+		estHousingTotal = housing.reduce((sum, item) => sum + (item.estimatedAmount ?? 0), 0);
+	});
 </script>
 
 <div class="overflow-x-auto">
@@ -68,7 +71,7 @@
 							class="input input-bordered w-full max-w-xs text-secondary"
 							bind:value={housing[i].estimatedAmount}
 							oninput={(e) => handleNumberInput(e, i, 'estimatedAmount')}
-							onblur={() => saveInvestment(expense)}
+							onblur={() => saveHousing(expense)}
 							placeholder="0.00"
 						/>
 					</td>
@@ -80,7 +83,7 @@
 							class="input input-bordered w-full max-w-xs text-secondary"
 							bind:value={housing[i].actualAmount}
 							oninput={(e) => handleNumberInput(e, i, 'actualAmount')}
-							onblur={() => saveInvestment(expense)}
+							onblur={() => saveHousing(expense)}
 							placeholder="0.00"
 						/>
 					</td>
@@ -94,13 +97,13 @@
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 
 						currency: 'USD' 
-					}).format(estimatedTotal)}
+					}).format(estHousingTotal)}
 				</td>
 				<td class="px-6 py-3">
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 
 						currency: 'USD' 
-					}).format(actualTotal)}
+					}).format(actHousingTotal)}
 				</td>
 			</tr>
 		</tfoot>

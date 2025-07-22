@@ -1,12 +1,18 @@
 <script lang="ts">
-	let { car = $bindable(), estCarTotal = $bindable(), actCarTotal = $bindable() } = $props();
+	interface Props {
+		car: any[];
+		actCarTotal: number;
+		estCarTotal: number;
+	}
+
+	let { car = $bindable(), actCarTotal = $bindable(), estCarTotal = $bindable() }: Props = $props();
 
 	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
 
 	async function saveCar(carItem: any) {
 		try {
 			const formData = new FormData();
-			formData.append('carItem', JSON.stringify(carItem));
+			formData.append('car', JSON.stringify(carItem));
 
 			const response = await fetch(`${window.location.pathname}?/update_car`, {
 				method: 'POST',
@@ -35,16 +41,9 @@
 		car[index][field] = cleanValue ? parseFloat(cleanValue) : 0;
 	}
 
-	const estimatedTotal = $derived(
-		car.reduce((sum: number, item: any) => sum + (Number(item.estimatedAmount) || 0), 0)
-	);
-	const actualTotal = $derived(
-		car.reduce((sum: number, item: any) => sum + (Number(item.actualAmount) || 0), 0)
-	);
-
 	$effect(() => {
-		estCarTotal = estimatedTotal;
-		actCarTotal = actualTotal;
+		actCarTotal = car.reduce((sum, item) => sum + (item.actualAmount ?? 0), 0);
+		estCarTotal = car.reduce((sum, item) => sum + (item.estimatedAmount ?? 0), 0);
 	});
 </script>
 
@@ -97,13 +96,13 @@
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 
 						currency: 'USD' 
-					}).format(estimatedTotal)}
+					}).format(estCarTotal)}
 				</td>
 				<td class="px-6 py-3">
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 
 						currency: 'USD' 
-					}).format(actualTotal)}
+					}).format(actCarTotal)}
 				</td>
 			</tr>
 		</tfoot>
