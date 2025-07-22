@@ -33,8 +33,10 @@
 		"@tailwindcss/vite": "^4.0.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.4",
+		"@types/plotly.js-dist-min": "^2.3.4",
 		"autoprefixer": "^10.4.21",
 		"clsx": "^2.1.1",
+		"daisyui": "^5.0.46",
 		"drizzle-kit": "^0.30.2",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
@@ -66,6 +68,7 @@
 		"@oslojs/encoding": "^1.1.0",
 		"@tanstack/table-core": "^8.21.3",
 		"drizzle-orm": "^0.40.0",
+		"plotly.js-dist-min": "^3.0.1",
 		"svelte-number-format": "^0.1.3"
 	}
 }

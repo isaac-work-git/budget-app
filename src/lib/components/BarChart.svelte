@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Chart, Card } from 'svelte-5-ui-lib';
 	import { ArrowUpOutline, ChevronDownOutline } from 'flowbite-svelte-icons';
 	import type { ApexOptions } from 'apexcharts';
+	import SankeyChart from './ui/SankeyChart.svelte';
 
 	let { income = $bindable(), items = $bindable() } = $props();
 
@@ -89,7 +89,7 @@
 	});
 </script>
 
-<Card size="xl" shadow="xl">
+<div class="card max-w-screen shadow-xl bg-neutral text-neutral-content mb-10">
 	<div class="flex justify-between border-b border-gray-200 pb-3 dark:border-gray-700">
 		<dl>
 			<dt class="pb-1 text-base font-normal text-gray-500 dark:text-gray-400">Profit</dt>
@@ -139,5 +139,5 @@
 		</dl>
 	</div>
 
-	<Chart options={optionBar} />
-</Card>
+	<SankeyChart />
+</div>

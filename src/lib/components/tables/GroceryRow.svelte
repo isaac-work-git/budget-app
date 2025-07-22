@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, Input } from 'svelte-5-ui-lib';
+	interface Props {
+		groceryItems: any[];
+		total: number;
+	}
+	let { groceryItems = $bindable(), total = $bindable() }: Props = $props();
 
-	let { groceryItems = $bindable() } = $props(); // array now!
+	$effect(() => {
+		total = groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0);
+	});
 
 	async function saveGrocery(groceryItem: { id: any; amount: any }) {
 		try {
@@ -39,20 +45,29 @@
 		}
 	}
 
-	const headItems = ['Name', 'Amount', 'Balance', 'Month'];
+	const headItems = ['Week', 'Amount', 'Month'];
 </script>
 
-<Table striped noborder>
-	<TableHead {headItems} />
-	<TableBody class="divide-y">
+<table class="table w-full">
+	<thead>
+		<tr>
+			{#each headItems as item}
+				<th class="py-3 text-lg text-secondary font-semibold">{item}</th>
+			{/each}
+		</tr>
+	</thead>
+	<tbody class="divide-y">
 		{#each groceryItems as groceryItem, i}
-			<TableBodyRow>
-				<TableBodyCell>{groceryItem.week}</TableBodyCell>
-				<TableBodyCell>
-					<Input
+			<tr>
+				<td>{groceryItem.week}</td>
+				<td>
+					<input
 						name="amount"
 						type="text"
-						class="rounded dark:text-black"
+						step="0.01"
+						min="0"
+						placeholder="0.00"
+						class="input input-bordered w-full max-w-xs text-secondary"
 						bind:value={groceryItems[i].amount}
 						oninput={(e) => {
 							const input = e.target as HTMLInputElement;
@@ -61,17 +76,23 @@
 						}}
 						onblur={() => saveGrocery(groceryItem)}
 					/>
-				</TableBodyCell>
-				<TableBodyCell>
-					{new Intl.NumberFormat('en-US', {
-						style: 'currency',
-						currency: 'USD'
-					}).format(
-						groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0)
-					)}
-				</TableBodyCell>
-				<TableBodyCell>{groceryItem.month}</TableBodyCell>
-			</TableBodyRow>
+				</td>
+				<td>{groceryItem.month}</td>
+			</tr>
 		{/each}
-	</TableBody>
-</Table>
+	</tbody>
+	<tfoot>
+		<tr class="font-semibold text-secondary text-lg">
+			<th scope="row" class="py-3">Total</th>
+			<td class="px-6 py-3">
+				{new Intl.NumberFormat('en-US', {
+					style: 'currency',
+					currency: 'USD'
+				}).format(
+					groceryItems.reduce((sum: any, item: { amount: any }) => sum + (item.amount ?? 0), 0)
+				)}
+			</td>
+			<td></td>
+		</tr>
+	</tfoot>
+</table>

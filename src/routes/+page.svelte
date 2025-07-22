@@ -1,93 +1,78 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
-	import { Tabs, TabItem, Label, Input } from 'svelte-5-ui-lib';
 	import { LockOutline, UserOutline } from 'flowbite-svelte-icons';
+	import { writable } from 'svelte/store';
 
 	let { form }: { form: ActionData } = $props();
+	const activeTab = writable<'login' | 'register'>('login');
 </script>
 
-<div class="flex h-screen flex-col items-center justify-center">
-	<Tabs
-		tabStyle="pill"
-		contentClass="p-6 bg-gray-100 rounded-b-xl shadow-md dark:text-white"
-		ulClass="flex flex-nowrap self-center justify-center overflow-hidden"
-	>
-		<TabItem open title="Login">
-			<form method="POST" action="?/login" use:enhance class="flex flex-col justify-center gap-10">
-				<Label for="username">
-					Username
-					<Input name="username" class="pl-10" required>
-						{#snippet left()}
-							<UserOutline class="h-4 w-4" />
-						{/snippet}
-					</Input>
-				</Label>
-				<Label for="password">
-					Password
-					<Input name="password" type="password" class="w-full pl-15" required>
-						{#snippet left()}
-							<LockOutline class="h-4 w-4" />
-						{/snippet}
-					</Input>
-				</Label>
-				<button class="flex cursor-pointer" formaction="?/login"> Login </button>
-			</form>
+<div class="flex h-screen flex-col items-center justify-center px-4">
+	<div class="tabs tabs-boxed mb-4" role="tablist">
+		<button
+			role="tab"
+			type="button"
+			tabindex="0"
+			class={`tab ${$activeTab === 'login' ? 'tab-active' : ''}`}
+			onclick={() => activeTab.set('login')}
+		>
+			Login
+		</button>
+		<button
+			role="tab"
+			type="button"
+			tabindex="0"
+			class={`tab ${$activeTab === 'register' ? 'tab-active' : ''}`}
+			onclick={() => activeTab.set('register')}
+		>
+			Register
+		</button>
+	</div>
+
+	{#if $activeTab === 'login'}
+		<form method="POST" action="?/login" use:enhance class="w-full max-w-sm">
+			<fieldset class="bg-base-200 border border-base-300 rounded-box p-6 shadow">
+				<legend class="text-lg font-bold mb-4">Login</legend>
+
+				<label class="label" for="login-username">Username</label>
+				<label class="input mb-4" for="login-username">
+					<UserOutline class="h-4 w-4" />
+					<input id="login-username" name="username" type="text" placeholder="Username" required />
+				</label>
+
+				<label class="label" for="login-password">Password</label>
+				<label class="input mb-4" for="login-password">
+					<LockOutline class="h-4 w-4" />
+					<input id="login-password" name="password" type="password" placeholder="Password" required />
+				</label>
+
+				<button class="btn btn-primary w-full" formaction="?/login">Login</button>
+			</fieldset>
 			<p class="mt-2 text-center font-semibold text-red-500">{form?.message ?? ''}</p>
-		</TabItem>
-		<TabItem title="Register">
-			<form
-				method="POST"
-				action="?/register"
-				use:enhance
-				class="flex flex-col justify-center gap-10"
-			>
-				<Label for="username">
-					Username
-					<Input name="username" class="pl-10" required>
-						{#snippet left()}
-							<UserOutline class="h-4 w-4" />
-						{/snippet}
-					</Input>
-				</Label>
-				<Label for="password">
-					Password
-					<Input type="password" name="password" class="pl-10" required>
-						{#snippet left()}
-							<LockOutline class="h-4 w-4" />
-						{/snippet}
-					</Input>
-				</Label>
-				<button
-					class="flex cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
-					formaction="?/register"
-				>
-					Register
-				</button>
-			</form>
+		</form>
+	{/if}
+
+	{#if $activeTab === 'register'}
+		<form method="POST" action="?/register" use:enhance class="w-full max-w-sm">
+			<fieldset class="bg-base-200 border border-base-300 rounded-box p-6 shadow">
+				<legend class="text-lg font-bold mb-4">Register</legend>
+
+				<label class="label" for="register-username">Username</label>
+				<label class="input mb-4" for="register-username">
+					<UserOutline class="h-4 w-4" />
+					<input id="register-username" name="username" type="text" placeholder="Username" required />
+				</label>
+
+				<label class="label" for="register-password">Password</label>
+				<label class="input mb-4" for="register-password">
+					<LockOutline class="h-4 w-4" />
+					<input id="register-password" name="password" type="password" placeholder="Password" required />
+				</label>
+
+				<button class="btn btn-outline btn-primary w-full" formaction="?/register">Register</button>
+			</fieldset>
 			<p class="mt-2 text-center font-semibold text-red-500">{form?.message ?? ''}</p>
-		</TabItem>
-	</Tabs>
+		</form>
+	{/if}
 </div>
-
-<style>
-	button {
-		display: flex;
-		border-radius: 9999px;
-		border: 2px solid var(--color-primary-500);
-		padding: calc(var(--spacing) * 4);
-		width: 50%;
-		align-self: center;
-		justify-content: center;
-	}
-
-	button:hover {
-		background-color: var(--color-primary-500);
-		color: white;
-	}
-
-	button:active {
-		background-color: var(--color-primary-700);
-		color: white;
-	}
-</style>
