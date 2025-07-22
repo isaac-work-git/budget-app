@@ -32,7 +32,7 @@
 
 <NavBar name={data.user.displayName} />
 <main class="flex flex-col gap-10">
-	<section id="top" class="mx-5 mt-10 gap-6 md:mx-10 md:mt-20 md:w-auto">
+	<section id="top" class="mx-5 my-10 gap-6 md:mx-10 md:mt-20 md:w-auto">
 		<IncomeCard name={data.user.displayName} bind:income />
 		<SankeyChart {items} {income} />
 	</section>
