@@ -45,7 +45,7 @@
 		</div>
 
 		<input
-			class="input input-bordered w-full md:w-1/3 self-center"
+			class="input input-bordered w-full md:w-1/3 self-center text-secondary"
 			name="income"
 			type="text"
 			placeholder="Enter amount"
