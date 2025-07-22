@@ -8,7 +8,7 @@
 
 	let { funItems = $bindable(), actFunTotal = $bindable(), estFunTotal = $bindable() }: Props = $props();
 
-	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
+	const headItems = ['Description', 'Est. Amount', 'Actual'];
 
 	async function saveFun(fun: any) {
 		try {
@@ -49,7 +49,7 @@
 </script>
 
 <div class="overflow-x-auto">
-	<table class="table">
+	<table class="table table-xs md:table-md">
 		<thead>
 			<tr>
 				{#each headItems as item}

@@ -2,7 +2,7 @@
 <script lang="ts">
 	let { items = $bindable() } = $props();
 
-	const headItems = ['Description', 'Estimated Amount', 'Actual Amount'];
+	const headItems = ['Description', 'Est. Amount', 'Actual'];
 
 	async function saveExpense(expense: any) {
 		try {
@@ -49,11 +49,11 @@
 </script>
 
 <div class="overflow-x-auto">
-	<table class="table">
+	<table class="table table-xs md:table-md">
 		<thead>
 			<tr>
 				{#each headItems as item}
-					<th class="py-3 text-lg text-secondary font-semibold">{item}</th>
+					<th class="md:py-3 md:text-lg text-secondary font-semibold">{item}</th>
 				{/each}
 			</tr>
 		</thead>
@@ -89,7 +89,7 @@
 			{/each}
 		</tbody>
 		<tfoot>
-			<tr class="font-semibold text-secondary text-lg">
+			<tr class="font-semibold text-secondary md:text-lg">
 				<th scope="row" class="py-3">Total</th>
 				<td class="px-6 py-3">
 					{new Intl.NumberFormat('en-US', { 

@@ -92,45 +92,45 @@
 <div>
 	<NavBar name={data?.user?.displayName ?? 'User'} />
 	<!-- Mobile View -->
-	<section id="mobile-column" class="grid grid-cols-1 md:hidden">
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
+	<section id="mobile-column" class="grid grid-cols-1 md:hidden mt-5 max-w-sm mx-3">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-2">Loans</h1>
+			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Loans</h1>
 			<div class="collapse-content p-2">
 				<LoanTable bind:loans bind:actLoanTotal bind:estLoanTotal />
 			</div>
 		</div>
-		<div class="collapse collapse-arrowshadow-xl bg-neutral text-neutral-content m-5">
+		<div class="collapse collapse-arrowshadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-2">Investments</h1>
+			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Investments</h1>
 			<div class="collapse-content p-2">
 				<InvestmentsTable bind:investments bind:actInvestTotal bind:estInvestTotal />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-2">Housing Expenses</h1>
+			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Housing</h1>
 			<div class="collapse-content p-2">
 				<AptTable bind:housing bind:actHousingTotal bind:estHousingTotal />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-2">Car Expenses</h1>
+			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Car Expenses</h1>
 			<div class="collapse-content p-2">
 				<CarTable bind:car bind:actCarTotal bind:estCarTotal />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-2">Grocery Tracker</h1>
+			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Grocery Tracker</h1>
 			<div class="collapse-content p-2">
 				<GroceryRow bind:groceryItems bind:total={groceryTotal} />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-5">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
-			<h1 class="collapse-title text-2xl font-bold p-2">Fun Money</h1>
+			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Fun Money</h1>
 			<div class="collapse-content p-2">
 				<FunTable bind:funItems bind:actFunTotal bind:estFunTotal />
 			</div>
@@ -153,7 +153,7 @@
 		</div>
 		<div class="card card-md shadow-xl bg-neutral text-neutral-content m-10">
 			<div class="card-body">
-				<h1 class="card-title text-2xl font-bold p-4">Housing Expenses</h1>
+				<h1 class="card-title text-2xl font-bold p-4">Housings</h1>
 				<AptTable bind:housing bind:actHousingTotal bind:estHousingTotal />
 			</div>
 		</div>
@@ -177,10 +177,10 @@
 		</div>
 	</section>
 
-    <section id="expenses" class="mb-25">
-        <div class="card card-md shadow-xl bg-neutral text-neutral-content m-5 md:m-10">
+    <section id="expenses" class="mb-10 md:mb-25">
+        <div class="card card-sm md:card-md shadow-xl bg-neutral text-neutral-content m-3 md:m-10">
             <div class="card-body">
-                <h1 class="card-title text-2xl font-bold p-4">Total Expenses</h1>
+                <h1 class="card-title text-2xl font-bold p-2">Total Expenses</h1>
                 <ExpenseTable bind:items />
             </div>
         </div>
