@@ -1,4 +1,4 @@
-<!-- ExpenseTable.svelte -->
+<!-- AptTable.svelte -->
 <script lang="ts">
 	interface Props {
 		housing: any[];

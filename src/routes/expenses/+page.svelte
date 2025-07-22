@@ -92,43 +92,43 @@
 <div>
 	<NavBar name={data?.user?.displayName ?? 'User'} />
 	<!-- Mobile View -->
-	<section id="mobile-column" class="grid grid-cols-1 md:hidden mt-5">
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-3">
+	<section id="mobile-column" class="grid grid-cols-1 md:hidden mt-5 max-w-sm mx-3">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Loans</h1>
 			<div class="collapse-content p-2">
 				<LoanTable bind:loans bind:actLoanTotal bind:estLoanTotal />
 			</div>
 		</div>
-		<div class="collapse collapse-arrowshadow-xl bg-neutral text-neutral-content m-3">
+		<div class="collapse collapse-arrowshadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Investments</h1>
 			<div class="collapse-content p-2">
 				<InvestmentsTable bind:investments bind:actInvestTotal bind:estInvestTotal />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-3">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Housing</h1>
 			<div class="collapse-content p-2">
 				<AptTable bind:housing bind:actHousingTotal bind:estHousingTotal />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-3">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Car Expenses</h1>
 			<div class="collapse-content p-2">
 				<CarTable bind:car bind:actCarTotal bind:estCarTotal />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-3">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Grocery Tracker</h1>
 			<div class="collapse-content p-2">
 				<GroceryRow bind:groceryItems bind:total={groceryTotal} />
 			</div>
 		</div>
-		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content m-3">
+		<div class="collapse collapse-arrow shadow-xl bg-neutral text-neutral-content my-3">
 			<input type="checkbox" />
 			<h1 class="collapse-title text-2xl font-bold p-2 px-4">Fun Money</h1>
 			<div class="collapse-content p-2">

@@ -51,7 +51,7 @@
 		<thead>
 			<tr>
 				{#each headItems as item}
-					<th class="py-3 text-lg text-secondary font-semibold">{item}</th>
+					<th class="md:py-3 md:text-lg text-secondary font-semibold">{item}</th>
 				{/each}
 			</tr>
 		</thead>
@@ -89,15 +89,15 @@
 			{/each}
 		</tbody>
 		<tfoot>
-			<tr class="font-semibold text-secondary text-lg">
+			<tr class="font-semibold text-secondary md:text-lg">
 				<th scope="row" class="py-3">Total</th>
-				<td class="px-6 py-3">
+				<td class="px-6 md:py-3">
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 
 						currency: 'USD' 
 					}).format(estInvestTotal)}
 				</td>
-				<td class="px-6 py-3">
+				<td class="px-6 md:py-3">
 					{new Intl.NumberFormat('en-US', { 
 						style: 'currency', 
 						currency: 'USD' 
