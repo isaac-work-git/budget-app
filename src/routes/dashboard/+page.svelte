@@ -4,6 +4,7 @@
 	import IncomeCard from '$lib/components/IncomeCard.svelte';
 	import SankeyChart from '$lib/components/ui/SankeyChart.svelte';
 	import type { ExpenseItem } from '$lib/types/expenseItem';
+	import BarChart from '$lib/components/ui/BarChart.svelte';
 
 	interface Props {
 		data: PageServerData;
@@ -35,5 +36,6 @@
 	<section id="top" class="mx-5 my-10 gap-6 md:mx-10 md:mt-20 md:w-auto">
 		<IncomeCard name={data.user.displayName} bind:income />
 		<SankeyChart {items} {income} />
+		<BarChart {income} {items} />
 	</section>
 </main>
