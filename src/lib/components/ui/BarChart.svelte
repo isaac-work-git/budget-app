@@ -1,23 +1,7 @@
 <script lang="ts">
-	import { ArrowUpOutline, ChevronDownOutline } from 'flowbite-svelte-icons';
 	import type { ApexOptions } from 'apexcharts';
-	import SankeyChart from './ui/SankeyChart.svelte';
 
 	let { income = $bindable(), items = $bindable() } = $props();
-
-	let profit = $derived.by(
-		() =>
-			income -
-			items.reduce(
-				(
-					/** @type {any} */ sum: any,
-					/** @type {{ actualAmount: any; }} */ item: { actualAmount: any }
-				) => sum + (item.actualAmount ?? 0),
-				0
-			)
-	);
-
-	let profitRate = $derived.by(() => (income === 0 ? 0 : (profit / income) * 100));
 
 	let optionBar = $state<ApexOptions>({
 		series: [
@@ -90,37 +74,6 @@
 </script>
 
 <div class="card max-w-screen shadow-xl bg-neutral text-neutral-content mb-10">
-	<div class="flex justify-between border-b border-gray-200 pb-3 dark:border-gray-700">
-		<dl>
-			<dt class="pb-1 text-base font-normal text-gray-500 dark:text-gray-400">Profit</dt>
-			<dd
-				class="text-3xl leading-none font-bold"
-				class:text-green-600={profit >= 0}
-				class:text-red-600={profit < 0}
-			>
-				{new Intl.NumberFormat('en-US', {
-					style: 'currency',
-					currency: 'USD'
-				}).format(profit)}
-			</dd>
-		</dl>
-
-		<span
-			class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium"
-			class:bg-green-100={profit >= 0}
-			class:text-green-800={profit >= 0}
-			class:bg-red-100={profit < 0}
-			class:text-red-800={profit < 0}
-		>
-			{#if profit >= 0}
-				<ArrowUpOutline class="me-1.5 h-2.5 w-2.5" />
-			{:else}
-				<ChevronDownOutline class="me-1.5 h-2.5 w-2.5" />
-			{/if}
-			Profit rate {profitRate.toFixed(1)}%
-		</span>
-	</div>
-
 	<div class="grid grid-cols-2 py-3">
 		<dl>
 			<dt class="pb-1 text-base font-normal text-gray-500 dark:text-gray-400">Income</dt>
@@ -138,6 +91,4 @@
 			</dd>
 		</dl>
 	</div>
-
-	<SankeyChart />
 </div>

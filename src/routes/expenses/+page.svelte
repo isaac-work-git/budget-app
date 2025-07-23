@@ -1,6 +1,6 @@
 <!-- +page.svelte -->
 <script lang="ts">
-	import ExpenseTable from "$lib/components/ExpenseTable.svelte";
+	import ExpenseTable from "$lib/components/tables/ExpenseTable.svelte";
 	import GroceryRow from "$lib/components/tables/GroceryRow.svelte";
 	import type { PageServerData } from "./$types";
 	import NavBar from "$lib/components/ui/NavBar.svelte";

@@ -82,21 +82,27 @@
             type: "sankey",
             orientation: "h",
             node: {
-                pad: 15,
-                thickness: 20,
-                line: { color: "black", width: 0.5 },
+                pad: 20,
+                thickness: 24,
+                line: { color: "#e5e7eb", width: 1.5 },
                 label: labels,
-                color: labels.map((_, index) => {
-                    if (index === 0) return "rgba(31, 119, 180, 0.8)"; // Income - blue
-                    if (labels[index] === "Savings/Remaining") return "rgba(44, 160, 44, 0.8)"; // Savings - green
-                    return "rgba(255, 127, 14, 0.8)"; // Expenses - orange
-                })
+                color: labels.map((label, index) => {
+                    if (index === 0) return "#3B82F6"; // Income - Blue
+                    if (label === "Savings/Remaining") return "#10B981"; // Savings - Green
+                    return "#F97316"; // Expenses - Orange
+                }),
+            hoverlabel: {
+                bgcolor: "#111827", // dark background for tooltip
+                bordercolor: "#D1D5DB",
+                font: { color: "#F9FAFB" }
+            }
             },
             link: {
                 source: links.map((l) => l.source),
                 target: links.map((l) => l.target),
                 value: links.map((l) => l.value),
-                color: links.map(() => "rgba(128, 128, 128, 0.4)")
+                color: links.map((_, i) => "rgba(107, 114, 128, 0.4)"),
+            hoverinfo: "none"
             }
         };
     }
@@ -109,12 +115,18 @@
         Plotly.newPlot(chartDiv, plotData, {
             title: {
                 text: "Income → Expenses Flow",
-                font: { size: 18 }
+                font: { size: 20, family: "Inter, sans-serif", color: "neutral-content" }, // Tailwind gray-800
+                xref: "paper",
+                x: 0.05
             },
-            font: { size: 14 },
-            margin: { t: 50, l: 50, r: 50, b: 50 },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)'
+            font: {
+                size: 14,
+                color: "#374151", // Tailwind gray-700
+                family: "Inter, sans-serif"
+            },
+            margin: { t: 60, l: 30, r: 30, b: 40 },
+            paper_bgcolor: "transparent",
+            plot_bgcolor: "transparent"
         }, {
             responsive: true,
             displayModeBar: false
@@ -135,11 +147,11 @@
     });
 </script>
 
-<div bind:this={chartDiv} class="w-full h-full bg-base-100 rounded-lg shadow-lg"></div>
+<div bind:this={chartDiv} class="w-full h-full bg-neutral rounded-2xl shadow-md"></div>
 
 {#if !plotlyLoaded}
-    <div class="w-full h-full flex items-center justify-center bg-base-100 rounded-lg shadow-lg">
-        <div class="loading loading-spinner loading-lg"></div>
-        <span class="ml-2">Loading chart...</span>
-    </div>
+	<div class="w-full h-full flex items-center justify-center bg-neutral rounded-2xl shadow-lgs">
+		<div class="loading loading-spinner loading-lg"></div>
+		<span class="ml-2 text-gray-500">Loading chart...</span>
+	</div>
 {/if}
