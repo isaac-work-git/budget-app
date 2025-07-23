@@ -147,10 +147,10 @@
     });
 </script>
 
-<div bind:this={chartDiv} class="w-full h-full bg-neutral rounded-2xl shadow-md"></div>
+<div bind:this={chartDiv} class="w-full h-full bg-neutral rounded-2xl shadow-md mb-10"></div>
 
 {#if !plotlyLoaded}
-	<div class="w-full h-full flex items-center justify-center bg-neutral rounded-2xl shadow-lgs">
+	<div class="w-full h-full flex items-center justify-center bg-neutral rounded-2xl shadow-lgs mb-10">
 		<div class="loading loading-spinner loading-lg"></div>
 		<span class="ml-2 text-gray-500">Loading chart...</span>
 	</div>

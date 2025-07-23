@@ -73,7 +73,7 @@
 	});
 </script>
 
-<div class="card max-w-screen shadow-xl bg-neutral text-neutral-content mb-10">
+<div class="card max-w-screen shadow-xl bg-neutral text-neutral-content">
 	<div class="grid grid-cols-2 py-3">
 		<dl>
 			<dt class="pb-1 text-base font-normal text-gray-500 dark:text-gray-400">Income</dt>
