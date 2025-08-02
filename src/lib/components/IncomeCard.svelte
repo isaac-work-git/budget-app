@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { Card, Input } from 'svelte-5-ui-lib';
-
 	let { income = $bindable(), name } = $props();
 
 	async function saveIncome(e: FocusEvent) {

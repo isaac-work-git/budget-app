@@ -1,9 +1,8 @@
-import { real } from 'drizzle-orm/gel-core';
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, integer, real, text, unique } from 'drizzle-orm/sqlite-core';
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
-	income: real('income'),
+	// income: real('income'),
 	username: text('username').notNull().unique(),
 	displayName: text('display_name').notNull().unique(),
 	passwordHash: text('password_hash').notNull()
@@ -85,20 +84,30 @@ export const grocery = sqliteTable('grocery', {
 		.references(() => user.id)
 });
 
+export const monthlyBudget = sqliteTable(
+	'budget',
+	{
+		id: text('id').primaryKey(),
+		income: real('income').notNull(),
+		expense: real('expense').notNull(),
+		month: integer('month').notNull(), // Use numeric month
+		year: integer('year').notNull(),
+		userId: text('user_id')
+		.notNull()
+		.references(() => user.id)
+	},
+	(budget) => ({
+		uniqueMonthYear: unique().on(budget.month, budget.year)
+	})
+);
+
 export type Session = typeof session.$inferSelect;
-
 export type User = typeof user.$inferSelect;
-
 export type Expense = typeof expenses.$inferSelect;
-
 export type Investment = typeof investments.$inferSelect;
-
 export type Housing = typeof housing.$inferSelect;
-
 export type Car = typeof car.$inferSelect;
-
 export type Loan = typeof loans.$inferSelect;
-
 export type Fun = typeof fun.$inferSelect;
-
 export type Grocery = typeof grocery.$inferSelect;
+export type MonthlyBudget = typeof monthlyBudget.$inferSelect;
