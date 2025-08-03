@@ -42,7 +42,7 @@
 <NavBar name={data.user.displayName} />
 <main class="flex flex-col gap-10">
 	<section id="top" class="mx-5 my-10 gap-6 md:mx-10 md:mt-20 md:w-auto">
-		<IncomeCard name={data.user.displayName} income={income} />
+		<IncomeCard name={data.user.displayName} income={income[0].income} />
 		<SankeyChart {items} income={income.reduce((sum, item) => sum + item.income, 0)} />
 		{#if BarChart}
 			<BarChart {income} {items} />

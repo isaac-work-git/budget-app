@@ -3,6 +3,7 @@
 	let { items = $bindable() } = $props();
 
 	const headItems = ['Description', 'Est. Amount', 'Actual'];
+	let previousTotal = 0;
 
 	async function saveExpense(expense: any) {
 		try {
@@ -22,18 +23,66 @@
 		}
 	}
 
+	async function saveTotalExpense(total: number) {
+		try {
+			const formData = new FormData();
+			formData.append('actualTotal', total.toString());
+
+			const response = await fetch(`${window.location.pathname}?/expense`, {
+				method: 'POST',
+				body: formData
+			});
+
+			if (!response.ok) {
+				console.error('Failed to save total expense');
+			}
+		} catch (error) {
+			console.error('Error saving total expense', error);
+		}
+	}
+
 	let previousItems = items.map((item: any) => ({ ...item }));
 
+	// $effect(() => {
+	// 	items.forEach((expense: { estimatedAmount: any; actualAmount: any; }, i: string | number) => {
+	// 		const prev = previousItems[i];
+	// 		if (
+	// 			expense.estimatedAmount !== prev?.estimatedAmount ||
+	// 			expense.actualAmount !== prev?.actualAmount
+	// 		) {
+	// 			saveExpense(expense);
+	// 		}
+	// 	});
+
+	// 	previousItems = items.map((item: any) => ({ ...item }));
+	// });
+
 	$effect(() => {
-		items.forEach((expense: { estimatedAmount: any; actualAmount: any; }, i: string | number) => {
+		// Track expense changes and save updates
+		let changed = false;
+
+		items.forEach((expense: { estimatedAmount: number; actualAmount: number }, i: number) => {
 			const prev = previousItems[i];
 			if (
 				expense.estimatedAmount !== prev?.estimatedAmount ||
 				expense.actualAmount !== prev?.actualAmount
 			) {
+				changed = true;
+				console.log(`Expense item ${i} changed:`, expense);
 				saveExpense(expense);
 			}
 		});
+
+		// If any item changed, save the new total
+		if (changed) {
+			const updatedTotal = items.reduce((sum: any, item: { actualAmount: any; }) => sum + (item.actualAmount || 0), 0);
+			if (updatedTotal !== previousTotal) {
+				const outputTotal: number = Math.round(updatedTotal * 100) / 100; // Round to 2 decimal places
+				console.log('Saving updated total expense:', outputTotal);
+				saveTotalExpense(outputTotal);
+				previousTotal = outputTotal; // Update previous total to the new value
+			}
+		}
 
 		previousItems = items.map((item: any) => ({ ...item }));
 	});

@@ -179,6 +179,45 @@ export const actions: Actions = {
 		return { success: true };
 	},
 
+	expense: async (event) => {
+		if (!event.locals.user) {
+			return fail(401, { message: 'Unauthorized' });
+		}
+
+		const formData = await event.request.formData();
+		const rawTotal = formData.get('actualTotal');
+		const currentMonth = new Date().getMonth() + 1;
+		const currentYear = new Date().getFullYear();
+
+		if (typeof rawTotal !== 'string') {
+			return fail(400, { message: 'Invalid data' });
+		}
+
+		const parsedTotal = parseFloat(rawTotal);
+		if (isNaN(parsedTotal)) {
+			return fail(400, { message: 'Invalid total number' });
+		}
+
+		try {
+			await db.update(table.monthlyBudget)
+				.set({
+					expense: parsedTotal,
+				})
+				.where(
+					and(
+						eq(table.monthlyBudget.month, currentMonth),
+						eq(table.monthlyBudget.year, currentYear),
+						eq(table.monthlyBudget.userId, event.locals.user.id)
+					)
+				);
+		} catch (err) {
+			console.error('Failed to update expense total', err);
+			return fail(500, { message: 'Internal Server Error' });
+		}
+
+		return { success: true };
+	},
+
 	update_investment: async ({ request, locals }) => {
 		if (!locals.user) {
 			return fail(401, { message: 'Unauthorized' });

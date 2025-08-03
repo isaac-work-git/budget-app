@@ -48,14 +48,14 @@
 	onMount(async () => {
 		const ApexCharts = (await import('apexcharts')).default;
 
-		const monthlyIncome = Array(12).fill(income);
-		const monthlyExpense = Array(12).fill(0);
+		const monthlyIncome = Array(12).fill(income[0].income ?? 0);
+		const monthlyExpense = Array(12).fill(income[0].expense ?? 0);
 
-		for (const item of items) {
-			if (!item.date) continue;
-			const month = new Date(item.date).getMonth();
-			monthlyExpense[month] += item.actualAmount ?? 0;
-		}
+		// for (const item of items) {
+		// 	if (!item.date) continue;
+		// 	const month = new Date(item.date).getMonth();
+		// 	monthlyExpense[month] += item.actualAmount ?? 0;
+		// }
 
 		optionBar.series = [
 			{ name: 'Income', color: '#31C48D', data: monthlyIncome },
