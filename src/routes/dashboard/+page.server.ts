@@ -3,21 +3,39 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from '../$types';
 import * as table from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
 		return redirect(302, '/');
 	}
 
+	const currentMonth = new Date().getMonth() + 1;
+	const currentYear = new Date().getFullYear();	
 	const [fullUser] = await db.select().from(table.user).where(eq(table.user.id, locals.user.id));
-	const { passwordHash, ...safeUser } = fullUser; // remove password
+	
+	const budget = await db
+		.select()
+		.from(table.monthlyBudget)
+		.where(
+			and(
+				eq(table.monthlyBudget.userId, locals.user.id),
+				eq(table.monthlyBudget.month, currentMonth),
+				eq(table.monthlyBudget.year, currentYear)
+			)
+		);
 	// Check existing expenses
 	const userExpenses = await db.select().from(table.expenses).where(eq(table.expenses.userId, locals.user.id));
+	const safeUser = {
+		id: locals.user.id,
+		username: locals.user.username,
+		displayName: fullUser.displayName || locals.user.username,
+	};
 
 	return {
 		user: safeUser,
 		expenses: userExpenses,
+		budget: budget,
 	};
 };
 
@@ -34,9 +52,9 @@ export const actions: Actions = {
 
 		try {
 			await db
-				.update(table.user)
+				.update(table.monthlyBudget)
 				.set({ income: parsedIncome })
-				.where(eq(table.user.id, event.locals.user.id));
+				.where(eq(table.monthlyBudget.userId, event.locals.user.id));
 		} catch (error) {
             return fail(500, { message: error instanceof Error ? error.message : 'An error has occurred' });
         }
