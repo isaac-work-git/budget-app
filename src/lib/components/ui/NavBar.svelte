@@ -4,7 +4,7 @@
 
 <div class="navbar rounded-b-xl shadow-xl bg-neutral text-neutral-content">
 	<div class="navbar-start">
-		<a href="/" class="btn btn-ghost md:text-2xl">BUDGT</a>
+		<a href="/" class="btn btn-ghost md:text-2xl">BUDGTR</a>
 	</div>
 
 	<div class="navbar-center hidden lg:flex">
