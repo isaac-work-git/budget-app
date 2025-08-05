@@ -12,7 +12,7 @@
 	let optionBar: ApexOptions = {
 		series: [],
 		chart: { type: 'bar', height: 350, toolbar: { show: false } },
-		plotOptions: { bar: { horizontal: false, columnWidth: '60%', borderRadius: 6 } },
+		plotOptions: { bar: { horizontal: false, columnWidth: '80%', borderRadius: 6, borderRadiusApplication: 'end' } },
 		dataLabels: { enabled: false },
 		tooltip: {
 			shared: true,
