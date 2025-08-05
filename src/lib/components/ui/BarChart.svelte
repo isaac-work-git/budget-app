@@ -47,8 +47,10 @@
 			labels: {
 				colors: '#ffffff'
 			}
+		},
+		fill: {
+			opacity: 1
 		}
-
 	};
 
 	onMount(async () => {
