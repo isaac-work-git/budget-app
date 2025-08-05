@@ -11,8 +11,8 @@
 
 	let optionBar: ApexOptions = {
 		series: [],
-		chart: { type: 'bar', height: 400, toolbar: { show: false } },
-		plotOptions: { bar: { horizontal: false, columnWidth: '45%', borderRadius: 6 } },
+		chart: { type: 'bar', height: 350, toolbar: { show: false } },
+		plotOptions: { bar: { horizontal: false, columnWidth: '60%', borderRadius: 6 } },
 		dataLabels: { enabled: false },
 		tooltip: {
 			shared: true,
@@ -26,7 +26,7 @@
 			labels: {
 				style: {
 					fontFamily: 'Inter, sans-serif',
-					cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+					cssClass: 'text-xs font-normal fill-white'
 				}
 			}
 		},
@@ -35,14 +35,20 @@
 				formatter: (val: number) => `$${val}`,
 				style: {
 					fontFamily: 'Inter, sans-serif',
-					cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+					cssClass: 'text-xs font-normal fill-white'
 				}
 			}
 		},
 		grid: {
 			strokeDashArray: 4,
-			padding: { left: 2, right: 2 }
+			padding: { left: 6, right: 4 }
+		},
+		legend: {
+			labels: {
+				colors: '#ffffff'
+			}
 		}
+
 	};
 
 	onMount(async () => {
@@ -62,8 +68,8 @@
 		}
 
 		optionBar.series = [
-			{ name: 'Income', color: '#31C48D', data: monthlyIncome },
-			{ name: 'Expense', color: '#F05252', data: monthlyExpense }
+			{ name: 'Income', color: '#1fb854', data: monthlyIncome },
+			{ name: 'Expense', color: '#f68067', data: monthlyExpense }
 		];
 
 		chart = new ApexCharts(chartEl, optionBar);
@@ -71,4 +77,7 @@
 	});
 </script>
 
-<div bind:this={chartEl} class="w-full" ></div>
+<div class="card w-full h-full flex items-center justify-center bg-neutral rounded-2xl shadow-lg">
+	<div class="card-title text-2xl p-4">Monthly Income vs Expense</div>
+	<div bind:this={chartEl} class="w-full" ></div>
+</div>

@@ -84,12 +84,12 @@
             node: {
                 pad: 20,
                 thickness: 24,
-                line: { color: "#e5e7eb", width: 1.5 },
+                line: { width: 1.5 },
                 label: labels,
                 color: labels.map((label, index) => {
-                    if (index === 0) return "#3B82F6"; // Income - Blue
-                    if (label === "Savings/Remaining") return "#10B981"; // Savings - Green
-                    return "#F97316"; // Expenses - Orange
+                    if (index === 0) return "#00b5fb"; // Income - Blue
+                    if (label === "Savings/Remaining") return "#1fb854"; // Savings - Green
+                    return "#f68067"; // Expenses - Orange
                 }),
             hoverlabel: {
                 bgcolor: "#111827", // dark background for tooltip
@@ -113,18 +113,12 @@
         const plotData = [createSankeyDataFromExpenses(items, income)];
 
         Plotly.newPlot(chartDiv, plotData, {
-            title: {
-                text: "Income → Expenses Flow",
-                font: { size: 20, family: "Inter, sans-serif", color: "neutral-content" }, // Tailwind gray-800
-                xref: "paper",
-                x: 0.05
-            },
             font: {
                 size: 14,
-                color: "#374151", // Tailwind gray-700
+                color: "#ffffff", // Tailwind gray-700
                 family: "Inter, sans-serif"
             },
-            margin: { t: 60, l: 30, r: 30, b: 40 },
+            margin: { t: 30, l: 30, r: 30, b: 40 },
             paper_bgcolor: "transparent",
             plot_bgcolor: "transparent"
         }, {
@@ -147,7 +141,10 @@
     });
 </script>
 
-<div bind:this={chartDiv} class="w-full h-full bg-neutral rounded-2xl shadow-md mb-10"></div>
+<div class="card w-full h-full flex items-center justify-center bg-neutral rounded-2xl shadow-lg mb-10">
+    <div class="card-title text-2xl p-4">Income → Expenses Flow</div>
+    <div bind:this={chartDiv}  class="w-full h-full" ></div>
+</div>
 
 {#if !plotlyLoaded}
 	<div class="w-full h-full flex items-center justify-center bg-neutral rounded-2xl shadow-lgs mb-10">
