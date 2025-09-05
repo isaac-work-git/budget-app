@@ -14,6 +14,8 @@
 	
 	let { data }: Props = $props();
 	
+	$inspect('Dashboard data:', data);
+	
 	let items: ExpenseItem[] = $state(
 		(data.expenses ?? []).map((item) => ({
 			description: String(item.description),
@@ -24,13 +26,15 @@
 
 	let income: BudgetItem[] = $state(
 		(Array.isArray(data.budget) ? data.budget : []).map((item) => ({
-			income: Number(item.income ?? 0),
-			expense: Number(item.expense ?? 0),
-			month: item.month,
-			year: item.year
+			income: Number(item?.income ?? 0),
+			expense: Number(item?.expense ?? 0),
+			month: item?.month ?? '',
+			year: item?.year ?? 0
 		}))
 	);
 
+	$inspect('Dashboard income data:', income);
+	
 	let BarChart: typeof import('$lib/components/ui/BarChart.svelte').default | null = $state(null);
 
 	onMount(async () => {
@@ -42,7 +46,10 @@
 <NavBar name={data.user.displayName} />
 <main class="flex flex-col gap-10">
 	<section id="top" class="mx-5 my-10 gap-6 md:mx-10 md:mt-20 md:w-auto">
-		<IncomeCard name={data.user.displayName} income={income[0].income} />
+		<IncomeCard
+			name={data.user.displayName}
+			income={income[0]?.income ?? 0}
+		/>
 		<SankeyChart {items} income={income.reduce((sum, item) => sum + item.income, 0)} />
 		{#if BarChart}
 			<BarChart {income} {items} />
