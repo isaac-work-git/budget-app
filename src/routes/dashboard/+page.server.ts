@@ -3,27 +3,23 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from '../$types';
 import * as table from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
 		return redirect(302, '/');
 	}
-
-	const currentMonth = new Date().getMonth() + 1;
-	const currentYear = new Date().getFullYear();	
-	const [fullUser] = await db.select().from(table.user).where(eq(table.user.id, locals.user.id));
 	
+	const [fullUser] = await db.select().from(table.user).where(eq(table.user.id, locals.user.id));
+
 	const budget = await db
-		.select()
-		.from(table.monthlyBudget)
-		.where(
-			and(
-				eq(table.monthlyBudget.userId, locals.user.id),
-				eq(table.monthlyBudget.month, currentMonth),
-				eq(table.monthlyBudget.year, currentYear)
-			)
-		);
+	.select()
+	.from(table.monthlyBudget)
+	.where(eq(table.monthlyBudget.userId, locals.user.id))
+	.orderBy(table.monthlyBudget.year, table.monthlyBudget.month);
+
+	console.log('Loaded budget data:', budget);
+
 	// Check existing expenses
 	const userExpenses = await db.select().from(table.expenses).where(eq(table.expenses.userId, locals.user.id));
 	const safeUser = {
@@ -45,7 +41,6 @@ export const actions: Actions = {
 		const rawIncome = formData.get('income') as string;
 		const cleanedIncome = rawIncome.replace(/[^0-9.]/g, '');
 		const parsedIncome = parseFloat(cleanedIncome);
-
 		if (!event.locals.user) {
 			return fail(401, { message: 'Unauthorized' });
 		}

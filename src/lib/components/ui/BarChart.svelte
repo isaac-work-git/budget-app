@@ -1,6 +1,6 @@
 <!-- src/lib/components/ui/BarChart.svelte -->
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import type { ApexOptions } from 'apexcharts';
 
 	let { income = $bindable(), items = $bindable() } = $props();
@@ -60,7 +60,7 @@
 		const monthlyExpense = Array(12).fill(0);
 
 		for (const entry of income) {
-			const monthIndex = entry.month - 1; // assuming 0-indexed
+			const monthIndex = Number(entry.month) - 1; // assuming 0-indexed
 			console.log(`Processing entry for month index: ${monthIndex}`);
 			if (monthIndex >= 0 && monthIndex < 12) {
 				console.log(`Adding income: ${entry.income}, expense: ${entry.expense} for month index: ${monthIndex}`);
@@ -76,6 +76,12 @@
 
 		chart = new ApexCharts(chartEl, optionBar);
 		await chart.render();
+	});
+
+	onDestroy(() => {
+		if (chart) {
+			chart.destroy();
+		}
 	});
 </script>
 
